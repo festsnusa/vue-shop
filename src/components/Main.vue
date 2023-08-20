@@ -23,7 +23,7 @@
 import Filter from '@/components/Filter.vue';
 import Catalog from '@/components/Catalog.vue';
 
-import { mapStores } from 'pinia';
+import { mapActions } from 'pinia';
 import useColorsStore from '@/stores/colors'
 import useProductsStore from '@/stores/products'
 import useBasketStore from '@/stores/basket'
@@ -32,121 +32,43 @@ import useMaterialsStore from '@/stores/materials'
 import useCategoriesStore from '@/stores/categories'
 import useSeasonsStore from '@/stores/seasons'
 
+// import { getAccessKey, getBaskets, getColors, getMaterials, getCategories, getSeasons, getProducts } from '@/includes/helper'
+
 export default {
   components: {
     Filter,
     Catalog,
   },
   computed: {
-    ...mapStores(useColorsStore, useProductsStore, useBasketStore, useMaterialsStore, useCategoriesStore, useSeasonsStore, useAccessKeyStore),
-  },
-  methods: {
-    async getAccessKey() {
-      await fetch("https://vue-moire.skillbox.cc/api/users/accessKey")
-        .then(response => response.json())
-        .then(data => {
-          this.accessKeyStore.accessKey = data.items
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          return
-        })
-    },
-    async getBaskets() {
-      await fetch(`https://vue-moire.skillbox.cc/api/baskets?userAccessKey=${this.accessKeyStore.accessKey}`)
-        .then(response => response.json())
-        .then(data => {
-          this.basketStore.basket = data.items
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          return
-        })
-    },
-    async getColors() {
-      await fetch("https://vue-moire.skillbox.cc/api/colors")
-        .then(response => response.json())
-        .then(data => {
-          this.colorsStore.colors = data.items
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          return
-        })
-    },
-    async getMaterials() {
-      await fetch("https://vue-moire.skillbox.cc/api/materials")
-        .then(response => response.json())
-        .then(data => {
-          this.materialsStore.materials = data.items
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          return
-        })
-    },
-    async getCategories() {
-      await fetch("https://vue-moire.skillbox.cc/api/productCategories")
-        .then(response => response.json())
-        .then(data => {
-          this.categoriesStore.categories = data.items
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          return
-        })
-    },
-    async getSeasons() {
-      await fetch("https://vue-moire.skillbox.cc/api/seasons")
-        .then(response => response.json())
-        .then(data => {
-          this.seasonsStore.seasons = data.items
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          return
-        })
-    },
-    async getProducts() {
-      await fetch("https://vue-moire.skillbox.cc/api/products")
-        .then(response => response.json())
-        .then(data => {
-          this.productsStore.products = data.items
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          return
-        })
-    }
-
+    ...mapActions(useColorsStore, useProductsStore, useBasketStore, useMaterialsStore, useCategoriesStore, useSeasonsStore, useAccessKeyStore),
   },
   async created() {
 
-    if (this.accessKeyStore.accessKey === "") {
-      this.getAccessKey()
+    if (useAccessKeyStore().accessKey === "") {
+      useAccessKeyStore().getAccessKey()
     }
 
-    if (!this.colorsStore.colors.length) {
-      this.getColors()
+    if (!useColorsStore().colors.length) {
+      useColorsStore().getColors()
     }
 
-    if (!this.productsStore.products.length) {
-      this.getProducts()
+    if (!useProductsStore().products.length) {
+      useProductsStore().getProducts()
     }
 
-    if (!this.materialsStore.materials.length) {
-      this.getMaterials()
+    if (!useMaterialsStore().materials.length) {
+      useMaterialsStore().getMaterials()
     }
 
-    if (!this.categoriesStore.categories.length) {
-      this.getCategories()
+    if (!useCategoriesStore().categories.length) {
+      useCategoriesStore().getCategories()
     }
 
-    if (!this.seasonsStore.seasons.length) {
-      this.getSeasons()
+    if (!useSeasonsStore().seasons.length) {
+      useSeasonsStore().getSeasons()
     }
 
-    this.getBaskets()
+    useBasketStore().getBaskets(useAccessKeyStore().accessKey)
     // console.log(this.productsStore.products)
 
   }
