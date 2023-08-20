@@ -1,5 +1,4 @@
 <script>
-import { mapStores } from 'pinia'
 import useCategoriesStore from '@/stores/categories'
 import useMaterialsStore from '@/stores/materials'
 import useSeasonsStore from '@/stores/seasons'
@@ -10,27 +9,32 @@ export default {
       categories: [],
       materials: [],
       seasons: [],
+      floorPrice: 0,
+      ceilPrice: 100,
+      currentCategory: 0,
+      checkedMaterials: [],
     }
   },
-  computed: {
-    ...mapStores(useCategoriesStore, useMaterialsStore, useSeasonsStore),
+  methods: {
+    checkMaterial(material) {
+      checkedMaterials.push(material)
+    },
+    setFilter() {
+
+    },
+    clearFilter() {
+
+    }
   },
   created() {
-    this.categories = this.categoriesStore.categories
-    this.materials = this.materialsStore.materials
-    this.seasons = this.seasonsStore.seasons
+    console.log(useSeasonsStore().seasons)
+    this.categories = useCategoriesStore().categories
+    this.materials = useMaterialsStore().materials
 
-    this.categoriesStore.$subscribe((mutation, state) => {
-      this.categories = state.categories
+    this.materials.forEach(e => {
+      e.checked = false
     })
-
-    this.materialsStore.$subscribe((mutation, state) => {
-      this.materials = state.materials
-    })
-
-    this.seasonsStore.$subscribe((mutation, state) => {
-      this.seasons = state.seasons
-    })
+    this.seasons = useSeasonsStore().seasons
   }
 }
 </script>
@@ -41,11 +45,11 @@ export default {
       <fieldset class="form__block">
         <legend class="form__legend">Цена</legend>
         <label class="form__label form__label--price">
-          <input class="form__input" type="text" name="min-price" value="0">
+          <input class="form__input" type="text" name="min-price" v-model="floorPrice">
           <span class="form__value">От</span>
         </label>
         <label class="form__label form__label--price">
-          <input class="form__input" type="text" name="max-price" value="12345">
+          <input class="form__input" type="text" name="max-price" v-model="ceilPrice">
           <span class="form__value">До</span>
         </label>
       </fieldset>
@@ -53,9 +57,9 @@ export default {
       <fieldset class="form__block">
         <legend class="form__legend">Категория</legend>
         <label class="form__label form__label--select">
-          <select class="form__select" type="text" name="category">
-            <option value="value0">Все категории</option>
-            <option v-for="(category, i) in categories" :value="`value${category.id}`">{{ category.title }}</option>
+          <select class="form__select" type="text" name="category" v-model="currentCategory">
+            <option value="0" selected>Все категории</option>
+            <option v-for="(category, i) in categories" :value="category.id">{{ category.title }}</option>
           </select>
         </label>
       </fieldset>
@@ -65,7 +69,8 @@ export default {
         <ul class="check-list">
           <li class="check-list__item" v-for="material in materials">
             <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="material" :value="material.code">
+              <input class="check-list__check sr-only" type="checkbox" name="material" :value="material.code"
+                @click="checkMaterial(material)">
               <span class="check-list__desc">
                 {{ material.title }}
                 <span>({{ material.productsCount }})</span>
@@ -90,10 +95,10 @@ export default {
         </ul>
       </fieldset>
 
-      <button class="filter__submit button button--primery" type="submit">
+      <button class="filter__submit button button--primery" type="submit" @click.prevent="setFilter">
         Применить
       </button>
-      <button class="filter__reset button button--second" type="button">
+      <button class="filter__reset button button--second" type="button" @click.prevent="clearFilter">
         Сбросить
       </button>
     </form>
