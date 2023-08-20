@@ -6,6 +6,18 @@ export default defineStore('categories', {
       categories: [],
     };
   },
+  actions: {
+    async getCategories() {
+      await fetch('https://vue-moire.skillbox.cc/api/productCategories')
+        .then((response) => response.json())
+        .then((data) => {
+          this.categories = data.items;
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    },
+  },
   // persist: true,
   persist: {
     storage: sessionStorage,

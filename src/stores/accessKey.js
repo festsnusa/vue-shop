@@ -6,6 +6,19 @@ export default defineStore('accessKey', {
       accessKey: '',
     };
   },
+  actions: {
+    async getAccessKey() {
+      await fetch('https://vue-moire.skillbox.cc/api/users/accessKey')
+        .then((response) => response.json())
+        .then((data) => {
+          this.accessKey = data.items;
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          return;
+        });
+    },
+  },
   // persist: true,
   persist: {
     storage: sessionStorage,
