@@ -18,6 +18,13 @@ export default defineStore('products', {
           return;
         });
     },
+    setFilter(minPrice, maxPrice, category, materials, collections) {
+      console.log(minPrice, maxPrice, category, materials, collections);
+      this.products = this.products.filter(
+        (e) => e.price >= +minPrice && e.price <= +maxPrice
+      );
+      console.log(this.products);
+    },
   },
   // persist: true,
   persist: {
