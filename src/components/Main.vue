@@ -57,7 +57,6 @@ export default {
         .then(response => response.json())
         .then(data => {
           this.basketStore.basket = data.items
-          console.log(this.basketStore.basket)
         })
         .catch(error => {
           console.error('Error:', error);
@@ -121,7 +120,7 @@ export default {
     }
 
   },
-  created() {
+  async created() {
 
     if (this.accessKeyStore.accessKey === "") {
       this.getAccessKey()
@@ -148,7 +147,7 @@ export default {
     }
 
     this.getBaskets()
-    console.log(this.seasonsStore.seasons)
+    // console.log(this.productsStore.products)
 
   }
 }

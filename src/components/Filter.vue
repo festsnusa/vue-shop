@@ -1,5 +1,38 @@
-<script setup>
-const categories = ["Все категории", "Футболки", "Бюстгалтеры", "Носки"]
+<script>
+import { mapStores } from 'pinia'
+import useCategoriesStore from '@/stores/categories'
+import useMaterialsStore from '@/stores/materials'
+import useSeasonsStore from '@/stores/seasons'
+
+export default {
+  data() {
+    return {
+      categories: [],
+      materials: [],
+      seasons: [],
+    }
+  },
+  computed: {
+    ...mapStores(useCategoriesStore, useMaterialsStore, useSeasonsStore),
+  },
+  created() {
+    this.categories = this.categoriesStore.categories
+    this.materials = this.materialsStore.materials
+    this.seasons = this.seasonsStore.seasons
+
+    this.categoriesStore.$subscribe((mutation, state) => {
+      this.categories = state.categories
+    })
+
+    this.materialsStore.$subscribe((mutation, state) => {
+      this.materials = state.materials
+    })
+
+    this.seasonsStore.$subscribe((mutation, state) => {
+      this.seasons = state.seasons
+    })
+  }
+}
 </script>
 
 <template>
@@ -21,7 +54,8 @@ const categories = ["Все категории", "Футболки", "Бюстг
         <legend class="form__legend">Категория</legend>
         <label class="form__label form__label--select">
           <select class="form__select" type="text" name="category">
-            <option v-for="(category, i) in categories" :value="`value${i + 1}`">{{ category }}</option>
+            <option value="value0">Все категории</option>
+            <option v-for="(category, i) in categories" :value="`value${category.id}`">{{ category.title }}</option>
           </select>
         </label>
       </fieldset>
@@ -29,39 +63,12 @@ const categories = ["Все категории", "Футболки", "Бюстг
       <fieldset class="form__block">
         <legend class="form__legend">Материал</legend>
         <ul class="check-list">
-          <li class="check-list__item">
+          <li class="check-list__item" v-for="material in materials">
             <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="material" value="лен">
+              <input class="check-list__check sr-only" type="checkbox" name="material" :value="material.code">
               <span class="check-list__desc">
-                лен
-                <span>(3)</span>
-              </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="material" value="хлопок">
-              <span class="check-list__desc">
-                хлопок
-                <span>(46)</span>
-              </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="material" value="шерсть">
-              <span class="check-list__desc">
-                шерсть
-                <span>(20)</span>
-              </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="material" value="шелк">
-              <span class="check-list__desc">
-                шелк
-                <span>(30)</span>
+                {{ material.title }}
+                <span>({{ material.productsCount }})</span>
               </span>
             </label>
           </li>
@@ -71,39 +78,12 @@ const categories = ["Все категории", "Футболки", "Бюстг
       <fieldset class="form__block">
         <legend class="form__legend">Коллекция</legend>
         <ul class="check-list">
-          <li class="check-list__item">
+          <li class="check-list__item" v-for="season in seasons">
             <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="collection" value="лето" checked="">
+              <input class="check-list__check sr-only" type="checkbox" name="collection" :value="season.code">
               <span class="check-list__desc">
-                лето
-                <span>(2)</span>
-              </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="collection" value="зима">
-              <span class="check-list__desc">
-                зима
-                <span>(53)</span>
-              </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="collection" value="весна">
-              <span class="check-list__desc">
-                весна
-                <span>(24)</span>
-              </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="collection" value="осень">
-              <span class="check-list__desc">
-                осень
-                <span>(30)</span>
+                {{ season.title }}
+                <span>({{ season.productsCount }})</span>
               </span>
             </label>
           </li>

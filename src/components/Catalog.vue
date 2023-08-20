@@ -1,40 +1,27 @@
 <template>
   <section class="catalog">
     <ul class="catalog__list">
-      <li class="catalog__item">
-        <RouterLink class="catalog__pic" to="/item/1">
-          <img src="img/product-1.jpg" srcset="img/product-1@2x.jpg 2x" alt="Название товара">
+      <li class="catalog__item" v-for="product in products">
+        <RouterLink class="catalog__pic" :to="`/item/${product.id}`">
+          <img :src="product.currentImage" srcset="img/product-1@2x.jpg 2x" alt="Название товара">
         </RouterLink>
 
         <h3 class="catalog__title">
           <RouterLink to="/item/1">
-            Кружевной бюстгалтер без косточек
+            {{ product.title }}
           </RouterLink>
         </h3>
 
         <span class="catalog__price">
-          3 690 ₽
+          {{ product.price }} ₽
         </span>
 
         <ul class="colors colors--black">
-          <li class="colors__item">
+          <li class="colors__item" v-for="(item, i) in product.colors">
             <label class="colors__label">
-              <input class="colors__radio sr-only" type="radio" name="color-1" value="#73B6EA" checked="">
-              <span class="colors__value" style="background-color: #73B6EA;">
-              </span>
-            </label>
-          </li>
-          <li class="colors__item">
-            <label class="colors__label">
-              <input class="colors__radio sr-only" type="radio" name="color-1" value="#8BE000">
-              <span class="colors__value" style="background-color: #8BE000;">
-              </span>
-            </label>
-          </li>
-          <li class="colors__item">
-            <label class="colors__label">
-              <input class="colors__radio sr-only" type="radio" name="color-1" value="#222">
-              <span class="colors__value" style="background-color: #222;">
+              <input class="colors__radio sr-only" type="radio" name="color-1" :value="`${item.color.code}`"
+                :checked="i === 0 ? true : false" @click="changeCurrentImage(product.id, item.gallery)">
+              <span class="colors__value" :style="`background-color: ${item.color.code}`">
               </span>
             </label>
           </li>
@@ -42,7 +29,7 @@
       </li>
     </ul>
 
-    <ul class="catalog__pagination pagination">
+    <!-- <ul class="catalog__pagination pagination">
       <li class="pagination__item">
         <a class="pagination__link pagination__link--arrow pagination__link--disabled" aria-label="Предыдущая страница">
           <svg width="8" height="14" fill="currentColor">
@@ -87,12 +74,53 @@
           </svg>
         </a>
       </li>
-    </ul>
+    </ul> -->
   </section>
 </template>
 
-<script setup>
+<script>
+import { mapStores } from 'pinia';
+import useProductsStore from '@/stores/products'
+import useColorsStore from '@/stores/colors'
 
+export default {
+  computed: {
+    ...mapStores(useProductsStore, useColorsStore)
+  },
+  data() {
+    return {
+      products: [],
+      colors: [],
+    }
+  },
+  methods: {
+    changeCurrentImage(currentId, location) {
+      // currentImage = location[0].file.url
+      const foundObject = this.products.find(obj => obj.id === currentId)
+      foundObject.currentImage = location[0].file.url
+    }
+  },
+  created() {
+
+    this.products = this.productsStore.products
+    this.colors = this.colorsStore.colors
+    this.productsStore.$subscribe((mutation, state) => {
+      this.products = state.products
+    })
+
+    this.products.forEach(e => {
+
+      let location = e.colors[0].gallery === null ? e.colors[1].gallery[0] : e.colors[0].gallery[0]
+      e.currentImage = location.file.url
+    })
+
+    this.productsStore.$subscribe((mutation, state) => {
+      this.colors = state.colors
+    })
+
+    // console.log(this.products.colors)
+  }
+}
 </script>
 
 <style lang="scss" scoped></style>
