@@ -2,8 +2,13 @@
 import useCategoriesStore from '@/stores/categories'
 import useMaterialsStore from '@/stores/materials'
 import useSeasonsStore from '@/stores/seasons'
+import useProductsStore from '@/stores/products'
+import Checkbox from "@/components/Checkbox.vue"
 
 export default {
+  components: {
+    Checkbox,
+  },
   data() {
     return {
       categories: [],
@@ -13,21 +18,35 @@ export default {
       ceilPrice: 100,
       currentCategory: 0,
       checkedMaterials: [],
+      checkedCollections: [],
     }
   },
   methods: {
-    checkMaterial(material) {
-      checkedMaterials.push(material)
+    checkMaterials(id, checked) {
+      let itemIncluded = this.checkedMaterials.includes(id)
+
+      if (!checked && itemIncluded) {
+        this.checkedMaterials = this.checkedMaterials.filter(e => e !== id)
+      }
+      else if (checked && !itemIncluded) {
+        this.checkedMaterials.push(id)
+      }
+    },
+    checkCollections(id, checked) {
+      let itemIncluded = this.checkedCollections.includes(id)
+
+      if (!checked && itemIncluded) {
+        this.checkedCollections = this.checkedCollections.filter(e => e !== id)
+      }
+      else if (checked && !itemIncluded) {
+        this.checkedCollections.push(id)
+      }
     },
     setFilter() {
-
-    },
-    clearFilter() {
-
+      useProductsStore().setFilter(this.floorPrice, this.ceilPrice, this.currentCategory, this.checkedMaterials, this.checkedCollections)
     }
   },
   created() {
-    console.log(useSeasonsStore().seasons)
     this.categories = useCategoriesStore().categories
     this.materials = useMaterialsStore().materials
 
@@ -68,14 +87,7 @@ export default {
         <legend class="form__legend">Материал</legend>
         <ul class="check-list">
           <li class="check-list__item" v-for="material in materials">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="material" :value="material.code"
-                @click="checkMaterial(material)">
-              <span class="check-list__desc">
-                {{ material.title }}
-                <span>({{ material.productsCount }})</span>
-              </span>
-            </label>
+            <Checkbox :item="material" :checkItem="checkMaterials" />
           </li>
         </ul>
       </fieldset>
@@ -84,13 +96,7 @@ export default {
         <legend class="form__legend">Коллекция</legend>
         <ul class="check-list">
           <li class="check-list__item" v-for="season in seasons">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="collection" :value="season.code">
-              <span class="check-list__desc">
-                {{ season.title }}
-                <span>({{ season.productsCount }})</span>
-              </span>
-            </label>
+            <Checkbox :item="season" :checkItem="checkCollections" />
           </li>
         </ul>
       </fieldset>
