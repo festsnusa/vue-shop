@@ -9,12 +9,12 @@
         </li>
         <li class="breadcrumbs__item">
           <a class="breadcrumbs__link" href="#">
-            Носки
+            {{ category }}
           </a>
         </li>
         <li class="breadcrumbs__item">
           <a class="breadcrumbs__link">
-            Носки с принтом мороженое
+            {{ title }}
           </a>
         </li>
       </ul>
@@ -156,8 +156,18 @@
   </main>
 </template>
 
-<script setup>
-
+<script>
+export default {
+  data() {
+    return {
+      category: "",
+      title: ""
+    }
+  },
+  created() {
+    console.log(this.$route.params.id)
+  }
+}
 </script>
 
 <style lang="scss" scoped></style>
