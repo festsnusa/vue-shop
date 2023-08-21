@@ -42,7 +42,7 @@ export default {
   computed: {
     ...mapActions(useColorsStore, useProductsStore, useBasketStore, useMaterialsStore, useCategoriesStore, useSeasonsStore, useAccessKeyStore),
   },
-  async created() {
+  async beforeCreate() {
 
     if (useAccessKeyStore().accessKey === "") {
       useAccessKeyStore().getAccessKey()
@@ -52,9 +52,9 @@ export default {
       useColorsStore().getColors()
     }
 
-    if (!useProductsStore().products.length) {
-      useProductsStore().getProducts()
-    }
+    // if (!useProductsStore().products.length) {
+    useProductsStore().getProducts()
+    // }
 
     if (!useMaterialsStore().materials.length) {
       useMaterialsStore().getMaterials()
