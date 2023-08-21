@@ -32,7 +32,7 @@ import useMaterialsStore from '@/stores/materials'
 import useCategoriesStore from '@/stores/categories'
 import useSeasonsStore from '@/stores/seasons'
 
-// import { getAccessKey, getBaskets, getColors, getMaterials, getCategories, getSeasons, getProducts } from '@/includes/helper'
+// import { setAccessKey, getBaskets, getColors, getMaterials, getCategories, getSeasons, getProducts } from '@/includes/helper'
 
 export default {
   components: {
@@ -45,7 +45,7 @@ export default {
   async beforeCreate() {
 
     if (useAccessKeyStore().accessKey === "") {
-      useAccessKeyStore().getAccessKey()
+      useAccessKeyStore().setAccessKey()
     }
 
     if (!useColorsStore().colors.length) {
