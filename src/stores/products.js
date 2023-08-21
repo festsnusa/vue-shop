@@ -4,9 +4,22 @@ export default defineStore('products', {
   state: () => {
     return {
       products: [],
+      currentProduct: [],
     };
   },
   actions: {
+    async setCurrentProduct(id) {
+      await fetch(`https://vue-moire.skillbox.cc/api/products/${id}`)
+        .then((response) => response.json())
+        .then((data) => {
+          this.currentProduct = data;
+          console.log(this.currentProduct);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          return;
+        });
+    },
     async getProducts(query = '') {
       await fetch(`https://vue-moire.skillbox.cc/api/products${query}`)
         .then((response) => response.json())
