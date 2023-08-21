@@ -2,10 +2,10 @@
   <section class="catalog">
     <ul class="catalog__list">
       <li class="catalog__item" v-for="(product, i) in products">
-        <CatalogImage :id="product.id" :products="products" :currentImage="setCurrentImage(product.id)" />
+        <CatalogImage :id="product.id" :currentImage="setCurrentImage(product.id)" />
 
         <h3 class="catalog__title">
-          <RouterLink to="/item/1">
+          <RouterLink :to="`/item/${product.id}`">
             {{ product.title }}
           </RouterLink>
         </h3>
@@ -85,6 +85,8 @@ export default {
     this.productsStore.$subscribe((mutation, state) => {
       this.colors = state.colors
     })
+
+    console.log(this.products)
   }
 }
 </script>

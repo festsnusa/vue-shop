@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  props: ["id", "products", "currentImage"],
+  props: ["id", "currentImage"],
 }
 </script>
 
