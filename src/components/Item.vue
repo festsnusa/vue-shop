@@ -120,48 +120,34 @@
 
       <div class="item__desc">
         <ul class="tabs">
-          <li class="tabs__item">
-            <a class="tabs__link tabs__link--current">
-              Информация о товаре
-            </a>
+          <li :class="`tabs__item tabs__link ${index === 0 ? 'tabs__link--current' : ''}`" @click="index = 0">
+            Информация о товаре
           </li>
-          <li class="tabs__item">
-            <a class="tabs__link" href="#">
-              Доставка и возврат
-            </a>
+          <li :class="`tabs__item tabs__link ${index === 1 ? 'tabs__link--current' : ''}`" @click="index = 1">
+            Доставка и возврат
           </li>
         </ul>
 
-        <div class="item__content">
-          <h3>Состав:</h3>
-
-          <p>
-            60% хлопок<br>
-            30% полиэстер<br>
-          </p>
-
-          <h3>Уход:</h3>
-
-          <p>
-            Машинная стирка при макс. 30ºC короткий отжим<br>
-            Гладить при макс. 110ºC<br>
-            Не использовать машинную сушку<br>
-            Отбеливать запрещено<br>
-            Не подвергать химчистке<br>
-          </p>
-
-        </div>
+        <ItemContent v-if="index === 0" />
+        <ItemProperty v-else />
       </div>
     </section>
   </main>
 </template>
 
 <script>
+import ItemContent from '@/components/ItemContent.vue';
+import ItemProperty from '@/components/ItemProperty.vue';
 export default {
+  components: {
+    ItemContent,
+    ItemProperty,
+  },
   data() {
     return {
       category: "",
-      title: ""
+      title: "",
+      index: 0,
     }
   },
   created() {
