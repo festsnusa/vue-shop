@@ -3,7 +3,9 @@ import { defineStore } from 'pinia';
 export default defineStore('products', {
   state: () => {
     return {
-      products: [],
+      productsAll: [],
+      productsFiltered: [],
+      isFiltered: false,
     };
   },
   actions: {
@@ -11,7 +13,7 @@ export default defineStore('products', {
       await fetch('https://vue-moire.skillbox.cc/api/products')
         .then((response) => response.json())
         .then((data) => {
-          this.products = data.items;
+          this.productsAll = data.items;
         })
         .catch((error) => {
           console.error('Error:', error);
@@ -20,10 +22,32 @@ export default defineStore('products', {
     },
     setFilter(minPrice, maxPrice, category, materials, collections) {
       console.log(minPrice, maxPrice, category, materials, collections);
-      this.products = this.products.filter(
+
+      if (+maxPrice < +minPrice) {
+        this.isFiltered = false;
+        return;
+      }
+      this.productsFiltered = this.productsAll.filter(
         (e) => e.price >= +minPrice && e.price <= +maxPrice
       );
-      console.log(this.products);
+
+      if (materials.length) {
+        materials.forEach((id) => {
+          this.productsFiltered = this.productsFiltered.filter((obj) =>
+            obj.materials.some((material) => material.id === id)
+          );
+          // console.log(foundObjects);
+        });
+      }
+
+      console.log(this.productsFiltered);
+      this.isFiltered = true;
+    },
+    // hasMaterial(item, id) {
+    //   return item.materials.some((material) => material.id === id);
+    // },
+    clearFilter() {
+      this.isFiltered = false;
     },
   },
   // persist: true,

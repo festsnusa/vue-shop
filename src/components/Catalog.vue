@@ -51,7 +51,15 @@ export default {
   methods: {
     setCurrentImage(id) {
       const foundObject = this.products.find(obj => obj.id === id)
-      return foundObject.currentImage
+
+      if (foundObject.currentImage !== undefined) {
+        return foundObject.currentImage
+      }
+
+      if (foundObject.colors[0].gallery === null) {
+        return ""
+      }
+      return foundObject.colors[0].gallery[0].file.url
     },
     changeCurrentImage(currentId, index) {
       const foundObject = this.products.find(obj => obj.id === currentId)
@@ -61,11 +69,16 @@ export default {
   },
   created() {
 
-    this.products = this.productsStore.products
+    this.products = this.productsStore.productsAll
     this.colors = this.colorsStore.colors
-    // this.productsStore.$subscribe((mutation, state) => {
-    //   this.products = state.products
-    // })
+
+    this.productsStore.$subscribe((mutation, state) => {
+      if (state.isFiltered) {
+        this.products = this.productsStore.productsFiltered
+      } else {
+        this.products = this.productsStore.productsAll
+      }
+    })
 
     this.products.forEach(e => {
 

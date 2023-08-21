@@ -44,6 +44,12 @@ export default {
     },
     setFilter() {
       useProductsStore().setFilter(this.floorPrice, this.ceilPrice, this.currentCategory, this.checkedMaterials, this.checkedCollections)
+    },
+    clearFilter() {
+      useProductsStore().clearFilter()
+    },
+    handleBeforeUnload() {
+      this.clearFilter()
     }
   },
   created() {
@@ -54,7 +60,13 @@ export default {
       e.checked = false
     })
     this.seasons = useSeasonsStore().seasons
-  }
+  },
+  mounted() {
+    window.addEventListener('beforeunload', this.handleBeforeUnload);
+  },
+  beforeUnmount() {
+    window.removeEventListener('beforeunload', this.handleBeforeUnload);
+  },
 }
 </script>
 
