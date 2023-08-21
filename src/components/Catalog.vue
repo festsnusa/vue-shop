@@ -69,15 +69,11 @@ export default {
   },
   created() {
 
-    this.products = this.productsStore.productsAll
+    this.products = this.productsStore.products
     this.colors = this.colorsStore.colors
 
     this.productsStore.$subscribe((mutation, state) => {
-      if (state.isFiltered) {
-        this.products = this.productsStore.productsFiltered
-      } else {
-        this.products = this.productsStore.productsAll
-      }
+      this.products = this.productsStore.products
     })
 
     this.products.forEach(e => {

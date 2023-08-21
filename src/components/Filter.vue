@@ -46,10 +46,10 @@ export default {
       useProductsStore().setFilter(this.floorPrice, this.ceilPrice, this.currentCategory, this.checkedMaterials, this.checkedCollections)
     },
     clearFilter() {
-      useProductsStore().clearFilter()
+      useProductsStore().getProducts()
     },
     handleBeforeUnload() {
-      this.clearFilter()
+      this.getProducts()
     }
   },
   created() {
@@ -90,7 +90,8 @@ export default {
         <label class="form__label form__label--select">
           <select class="form__select" type="text" name="category" v-model="currentCategory">
             <option value="0" selected>Все категории</option>
-            <option v-for="(category, i) in categories" :value="category.id">{{ category.title }}</option>
+            <option v-for="(category, i) in categories" :value="category.id" :key="categories">{{ category.title }}
+            </option>
           </select>
         </label>
       </fieldset>

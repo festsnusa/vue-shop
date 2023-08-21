@@ -3,51 +3,50 @@ import { defineStore } from 'pinia';
 export default defineStore('products', {
   state: () => {
     return {
-      productsAll: [],
-      productsFiltered: [],
-      isFiltered: false,
+      products: [],
     };
   },
   actions: {
-    async getProducts() {
-      await fetch('https://vue-moire.skillbox.cc/api/products')
+    async getProducts(query = '') {
+      await fetch(`https://vue-moire.skillbox.cc/api/products${query}`)
         .then((response) => response.json())
         .then((data) => {
-          this.productsAll = data.items;
+          this.products = data.items;
         })
         .catch((error) => {
           console.error('Error:', error);
           return;
         });
     },
-    setFilter(minPrice, maxPrice, category, materials, collections) {
-      console.log(minPrice, maxPrice, category, materials, collections);
+    setFilter(minPrice, maxPrice, category, materials, seasons) {
+      console.log(minPrice, maxPrice, category, materials, seasons);
 
-      if (+maxPrice < +minPrice) {
-        this.isFiltered = false;
-        return;
+      let queryArr = [];
+
+      // price
+      if (+maxPrice > 0 && +minPrice >= 0) {
+        queryArr.push(`minPrice=${minPrice}&maxPrice=${maxPrice}`);
       }
-      this.productsFiltered = this.productsAll.filter(
-        (e) => e.price >= +minPrice && e.price <= +maxPrice
-      );
 
+      // category
+      if (category > 0) {
+        queryArr.push(`categoryId=${category}`);
+      }
+
+      // materials
       if (materials.length) {
-        materials.forEach((id) => {
-          this.productsFiltered = this.productsFiltered.filter((obj) =>
-            obj.materials.some((material) => material.id === id)
-          );
-          // console.log(foundObjects);
+        materials.map((id) => {
+          queryArr.push(`materialIds[]=${id}`);
+        });
+      }
+      // seasons
+      if (seasons.length) {
+        seasons.map((id) => {
+          queryArr.push(`seasonIds[]=${id}`);
         });
       }
 
-      console.log(this.productsFiltered);
-      this.isFiltered = true;
-    },
-    // hasMaterial(item, id) {
-    //   return item.materials.some((material) => material.id === id);
-    // },
-    clearFilter() {
-      this.isFiltered = false;
+      this.getProducts(`?${queryArr.join('&')}`);
     },
   },
   // persist: true,
