@@ -7,11 +7,11 @@ export default defineStore('accessKey', {
     };
   },
   actions: {
-    async getAccessKey() {
+    async setAccessKey() {
       await fetch('https://vue-moire.skillbox.cc/api/users/accessKey')
         .then((response) => response.json())
         .then((data) => {
-          this.accessKey = data.items;
+          this.accessKey = data.accessKey;
         })
         .catch((error) => {
           console.error('Error:', error);
