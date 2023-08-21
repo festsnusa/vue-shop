@@ -3,19 +3,15 @@
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="index.html">
+          <RouterLink class="breadcrumbs__link" to="/">
             Каталог
-          </a>
+          </RouterLink>
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#">
-            {{ category }}
-          </a>
+          {{ category }}
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link">
-            {{ title }}
-          </a>
+          {{ title }}
         </li>
       </ul>
     </div>
@@ -29,13 +25,13 @@
         <ul class="pics__list">
           <li class="pics__item">
             <a href="" class="pics__link pics__link--current">
-              <img width="98" height="98" src="img/product-square-2.jpg" srcset="img/product-square-2@2x.jpg 2x"
+              <img width="98" height="98" src="@/assets/img/product-square-2.jpg" srcset="img/product-square-2@2x.jpg 2x"
                 alt="Название товара">
             </a>
           </li>
           <li class="pics__item">
             <a href="" class="pics__link">
-              <img width="98" height="98" src="img/product-square-3.jpg" srcset="img/product-square-3@2x.jpg 2x"
+              <img width="98" height="98" src="@/assets/img/product-square-3.jpg" srcset="img/product-square-3@2x.jpg 2x"
                 alt="Название товара">
             </a>
           </li>
@@ -45,29 +41,25 @@
       <div class="item__info">
         <span class="item__code">Артикул: 150030</span>
         <h2 class="item__title">
-          Смартфон Xiaomi Mi Mix 3 6/128GB
+          {{ title }}
         </h2>
         <div class="item__form">
           <form class="form" action="#" method="POST">
             <div class="item__row item__row--center">
               <div class="form__counter">
-                <button type="button" aria-label="Убрать один товар">
-                  <svg width="12" height="12" fill="currentColor">
-                    <use xlink:href="#icon-minus"></use>
-                  </svg>
+                <button type="button" aria-label="Убрать один товар" @click="changeCount('-')">
+                  -
                 </button>
 
-                <input type="text" value="1" name="count">
+                <input type="text" :value="itemsNum" name="count" readonly>
 
-                <button type="button" aria-label="Добавить один товар">
-                  <svg width="12" height="12" fill="currentColor">
-                    <use xlink:href="#icon-plus"></use>
-                  </svg>
+                <button type="button" aria-label="Добавить один товар" @click="changeCount('+')">
+                  +
                 </button>
               </div>
 
               <b class="item__price">
-                18 990 ₽
+                {{ total }} ₽
               </b>
             </div>
 
@@ -75,37 +67,22 @@
               <fieldset class="form__block">
                 <legend class="form__legend">Цвет</legend>
                 <ul class="colors colors--black">
-                  <li class="colors__item">
+                  <li class="colors__item" v-for="(item, i) in colors">
                     <label class="colors__label">
-                      <input class="colors__radio sr-only" type="radio" name="color-item" value="blue" checked="">
-                      <span class="colors__value" style="background-color: #73B6EA;">
+                      <input class="colors__radio sr-only" type="radio" name="color-1" :value="`${item.color.code}`"
+                        @click="changeCurrentImage(item.id, i)">
+                      <span class="colors__value" :style="`background-color: ${item.color.code}`">
                       </span>
                     </label>
-                  </li>
-                  <li class="colors__item">
-                    <label class="colors__label">
-                      <input class="colors__radio sr-only" type="radio" name="color-item" value="yellow">
-                      <span class="colors__value" style="background-color: #FFBE15;">
-                      </span>
-                    </label>
-                  </li>
-                  <li class="colors__item">
-                    <label class="colors__label">
-                      <input class="colors__radio sr-only" type="radio" name="color-item" value="gray">
-                      <span class="colors__value" style="background-color: #939393;">
-                      </span></label>
                   </li>
                 </ul>
               </fieldset>
-
 
               <fieldset class="form__block">
                 <legend class="form__legend">Размер</legend>
                 <label class="form__label form__label--small form__label--select">
                   <select class="form__select" type="text" name="category">
-                    <option value="value1">37-39</option>
-                    <option value="value2">40-42</option>
-                    <option value="value3">42-50</option>
+                    <option :value="size.id" v-for="size in sizes">{{ size.title }}</option>
                   </select>
                 </label>
               </fieldset>
@@ -138,20 +115,62 @@
 <script>
 import ItemContent from '@/components/ItemContent.vue';
 import ItemProperty from '@/components/ItemProperty.vue';
+
+import { mapStores } from 'pinia';
+import useProductsStore from '@/stores/products'
+
 export default {
   components: {
     ItemContent,
     ItemProperty,
+  },
+  computed: {
+    ...mapStores(useProductsStore)
   },
   data() {
     return {
       category: "",
       title: "",
       index: 0,
+      currentProduct: [],
+      category: '',
+      sizes: [],
+      colors: [],
+      price: 0,
+      itemsNum: 1,
+      total: 0,
+    }
+  },
+  methods: {
+    changeCount(operation) {
+      if (operation === "-") {
+        this.itemsNum--
+        if (this.itemsNum <= 0) {
+          this.itemsNum = 1
+        }
+      } else { this.itemsNum++ }
+
+      this.changeTotal()
+    },
+    changeTotal() {
+      this.total = this.price * this.itemsNum
     }
   },
   created() {
-    console.log(this.$route.params.id)
+
+    useProductsStore().setCurrentProduct(this.$route.params.id)
+
+    this.productsStore.$subscribe((mutation, state) => {
+      this.currentProduct = this.productsStore.currentProduct
+      this.category = this.currentProduct.category.title
+      this.title = this.currentProduct.title
+      this.sizes = this.currentProduct.sizes
+      this.colors = this.currentProduct.colors
+      this.price = this.currentProduct.price
+      this.total = this.price * this.itemsNum
+      console.log(this.currentProduct)
+    })
+
   }
 }
 </script>
