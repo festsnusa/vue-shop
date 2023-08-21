@@ -15,12 +15,11 @@
         </li>
       </ul>
     </div>
-
+    <h1>{{ sizeId }}</h1>
     <section class="item">
       <div class="item__pics pics">
         <div class="pics__wrapper">
-          <img width="570" height="570" src="img/product-square-1.jpg" srcset="img/product-square-1@2x.jpg 2x"
-            alt="Название товара">
+          <img width="570" height="570" :src="currentImage" srcset="img/product-square-1@2x.jpg 2x" alt="Название товара">
         </div>
         <ul class="pics__list">
           <li class="pics__item">
@@ -44,7 +43,7 @@
           {{ title }}
         </h2>
         <div class="item__form">
-          <form class="form" action="#" method="POST">
+          <form class="form" v-on:submit.prevent="onSubmit">
             <div class="item__row item__row--center">
               <div class="form__counter">
                 <button type="button" aria-label="Убрать один товар" @click="changeCount('-')">
@@ -81,7 +80,7 @@
               <fieldset class="form__block">
                 <legend class="form__legend">Размер</legend>
                 <label class="form__label form__label--small form__label--select">
-                  <select class="form__select" type="text" name="category">
+                  <select class="form__select" type="text" name="category" v-model="sizeId">
                     <option :value="size.id" v-for="size in sizes">{{ size.title }}</option>
                   </select>
                 </label>
@@ -118,6 +117,8 @@ import ItemProperty from '@/components/ItemProperty.vue';
 
 import { mapStores } from 'pinia';
 import useProductsStore from '@/stores/products'
+import useAccessKeyStore from '@/stores/accessKey'
+import useBasketStore from '@/stores/basket'
 
 export default {
   components: {
@@ -125,7 +126,7 @@ export default {
     ItemProperty,
   },
   computed: {
-    ...mapStores(useProductsStore)
+    ...mapStores(useProductsStore),
   },
   data() {
     return {
@@ -139,6 +140,9 @@ export default {
       price: 0,
       itemsNum: 1,
       total: 0,
+      currentImage: "",
+      colorId: "",
+      sizeId: ""
     }
   },
   methods: {
@@ -154,6 +158,24 @@ export default {
     },
     changeTotal() {
       this.total = this.price * this.itemsNum
+    },
+    changeCurrentColorId(id) {
+      this.colorId = id
+    },
+    changeCurrentImage(id, index) {
+      this.currentImage = this.currentProduct.colors[index].gallery[0].file.url
+      console.log(this.currentImage)
+      this.changeCurrentColor(this.currentProduct.colors[index].color.id)
+    },
+    onSubmit() {
+      let accessKey = useAccessKeyStore().accessKey
+
+      if (accessKey === "") {
+        useAccessKeyStore().setAccessKey()
+        let accessKey = useAccessKeyStore().accessKey
+      }
+
+      useBasketStore().addToBasket(accessKey, this.currentProduct.id, this.colorId, this.sizeId, this.itemsNum)
     }
   },
   created() {
@@ -165,10 +187,17 @@ export default {
       this.category = this.currentProduct.category.title
       this.title = this.currentProduct.title
       this.sizes = this.currentProduct.sizes
+      this.sizeId = this.sizes[0].id
       this.colors = this.currentProduct.colors
       this.price = this.currentProduct.price
       this.total = this.price * this.itemsNum
       console.log(this.currentProduct)
+
+      let location = this.currentProduct.colors[0].gallery === null ? this.currentProduct.colors[1].gallery[0] : this.currentProduct.colors[0].gallery[0]
+      this.currentImage = location.file.url
+      this.colorId = this.currentProduct.colors[0].color.id
+      console.log(this.currentImage)
+      console.log(this.colorId)
     })
 
   }
