@@ -12,6 +12,7 @@ export default defineStore('colors', {
         .then((response) => response.json())
         .then((data) => {
           this.colors = data.items;
+          window.location.reload();
         })
         .catch((error) => {
           console.error('Error:', error);

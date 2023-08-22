@@ -12,6 +12,7 @@ export default defineStore('categories', {
         .then((response) => response.json())
         .then((data) => {
           this.categories = data.items;
+          window.location.reload();
         })
         .catch((error) => {
           console.error('Error:', error);

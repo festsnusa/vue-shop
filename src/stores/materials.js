@@ -12,6 +12,7 @@ export default defineStore('materials', {
         .then((response) => response.json())
         .then((data) => {
           this.materials = data.items;
+          window.location.reload();
         })
         .catch((error) => {
           console.error('Error:', error);

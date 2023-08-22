@@ -12,6 +12,7 @@ export default defineStore('page', {
         .then((response) => response.json())
         .then((data) => {
           this.seasons = data.items;
+          window.location.reload();
         })
         .catch((error) => {
           console.error('Error:', error);
