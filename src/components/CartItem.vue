@@ -37,8 +37,11 @@
 </template>
 
 <script>
+import useBasketStore from "@/stores/basket"
+import useAccessKeyStore from "@/stores/accessKey"
+
 export default {
-  props: ["item", "updateTotalPrice"],
+  props: ["item"],
   data() {
     return {
       quantity: this.item.quantity,
@@ -60,18 +63,19 @@ export default {
       return (item.color.gallery === null) ? "/src/assets/img/not-available.png" : item.color.gallery[0].file.url
     },
     changeQuantity(operation) {
-      // if (operation === "-") {
-      //   this.quantity--
-      //   if (this.quantity <= 0) this.quantity = 1
-      // } else {
-      //   this.quantity++
-      // }
 
-      // this.changePrice()
-    },
-    changePrice() {
-      // this.price = this.item.price * this.quantity
-      // this.updateTotalPrice(this.item.id)
+      if (operation === "-") {
+        this.quantity--
+        if (this.quantity <= 0) {
+          this.quantity = 1
+          return
+        }
+      } else {
+        this.quantity++
+      }
+
+      let accessKey = useAccessKeyStore().accessKey
+      useBasketStore().updateBasketProduct(accessKey, this.item.id, this.quantity)
     },
   }
 }
