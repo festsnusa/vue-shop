@@ -4,6 +4,7 @@ import useBasketStore from "@/stores/basket"
 import useAccessKeyStore from "@/stores/accessKey"
 
 import CartItem from "@/components/CartItem.vue"
+import Breadcrumbs from "@/components/Breadcrumbs.vue"
 
 export default {
   data() {
@@ -13,7 +14,8 @@ export default {
     }
   },
   components: {
-    CartItem
+    CartItem,
+    Breadcrumbs,
   },
   computed: {
     ...mapStores(useBasketStore),
@@ -56,18 +58,7 @@ export default {
 <template>
   <main class="content container">
     <div class="content__top">
-      <ul class="breadcrumbs">
-        <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="index.html">
-            Каталог
-          </a>
-        </li>
-        <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link">
-            Корзина
-          </a>
-        </li>
-      </ul>
+      <Breadcrumbs title="Корзина" />
 
       <div class="content__row">
         <h1 class="content__title">
