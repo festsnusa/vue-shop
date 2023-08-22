@@ -5,8 +5,8 @@
         Каталог
       </RouterLink>
     </li>
-    <span> — </span>
-    <a href="#">
+    <span v-show="category"> — </span>
+    <a href="#" v-show="category">
       <li class="breadcrumbs__item">
         {{ category }}
       </li>
