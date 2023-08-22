@@ -47,6 +47,7 @@ export default defineStore('basket', {
         if (data.error) {
           alert(`Ошибка. Код: ${data.error.code}; ${data.error.message}`);
           console.error(data.error);
+          window.location.reload();
           return;
         }
 
