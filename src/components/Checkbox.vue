@@ -1,6 +1,6 @@
 <template>
   <label class="check-list__label">
-    <input class="check-list__check sr-only" type="checkbox" name="material" value="лен" v-model="checked"
+    <input class="check-list__check sr-only" type="checkbox" name="material" v-model="checked"
       @change="checkItem(item.id, checked)">
     <span class="check-list__desc">
       {{ item.title }}
