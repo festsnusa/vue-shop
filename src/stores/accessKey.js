@@ -12,6 +12,7 @@ export default defineStore('accessKey', {
         .then((response) => response.json())
         .then((data) => {
           this.accessKey = data.accessKey;
+          console.log(this.accessKey);
         })
         .catch((error) => {
           console.error('Error:', error);
