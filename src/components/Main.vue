@@ -7,7 +7,8 @@
           Каталог
         </h1>
         <span class="content__info">
-          152 товара
+          <!-- 152 товара -->
+          {{ computeItemsQuantity }}
         </span>
       </div>
     </div>
@@ -41,6 +42,19 @@ export default {
   },
   computed: {
     ...mapActions(useColorsStore, useProductsStore, useBasketStore, useMaterialsStore, useCategoriesStore, useSeasonsStore, useAccessKeyStore),
+    computeItemsQuantity() {
+      const itemsLength = useProductsStore().products.length
+      const arr = [2, 3, 4]
+      return itemsLength === 0 ? "Нет товаров"
+        : itemsLength === 1 ? "1 товар"
+          : arr.includes(itemsLength) ? `${itemsLength} товара`
+            : `${itemsLength} товаров`
+    }
+  },
+  data() {
+    return {
+      itemsCount: 0,
+    }
   },
   async beforeCreate() {
 
@@ -68,8 +82,10 @@ export default {
       useSeasonsStore().getSeasons()
     }
 
-    useBasketStore().getBaskets(useAccessKeyStore().accessKey)
+    useBasketStore().getBasket(useAccessKeyStore().accessKey)
     // console.log(this.productsStore.products)
+
+    console.log(useAccessKeyStore().accessKey)
 
   }
 }
