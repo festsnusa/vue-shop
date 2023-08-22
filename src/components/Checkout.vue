@@ -2,7 +2,8 @@
   <main class="content container">
     <div class="checkout" v-if="!orderIsProcessed">
       <div class="content__top">
-        <ul class="breadcrumbs">
+        <Breadcrumbs :сheckout="true" title="Корзина" />
+        <!-- <ul class="breadcrumbs">
           <li class="breadcrumbs__item">
             <a class="breadcrumbs__link" href="index.html">
               Каталог
@@ -24,34 +25,17 @@
           <h1 class="content__title">
             Оформление заказа
           </h1>
-        </div>
+        </div> -->
       </div>
 
       <section class="cart" v-if="!orderIsProcessed">
         <form class="cart__form form" @submit.prevent="viewResult" method="POST">
           <div class="cart__field">
             <div class="cart__data">
-              <label class="form__label">
-                <input class="form__input" type="text" name="name" placeholder="Введите ваше полное имя">
-                <span class="form__value">ФИО</span>
-              </label>
-
-              <label class="form__label">
-                <input class="form__input" type="text" name="address" placeholder="Введите ваш адрес">
-                <span class="form__value">Адрес доставки</span>
-              </label>
-
-              <label class="form__label">
-                <input class="form__input" type="tel" name="phone" placeholder="Введите ваш телефон">
-                <span class="form__value">Телефон</span>
-                <span class="form__error">Неверный формат телефона</span>
-              </label>
-
-              <label class="form__label">
-                <input class="form__input" type="email" name="email" placeholder="Введи ваш Email">
-                <span class="form__value">Email</span>
-              </label>
-
+              <Input value="ФИО" name="name" type="text" placeholder="Введите ваше полное имя" />
+              <Input value="Адрес доставки" name="address" type="text" placeholder="Введите ваш адрес" />
+              <Input value="Телефон" name="phone" type="tel" placeholder="Введите ваш телефон" />
+              <Input value="Email" name="email" type="email" placeholder="Введи ваш Email" />
               <label class="form__label">
                 <textarea class="form__input form__input--area" name="comments" placeholder="Ваши пожелания"></textarea>
                 <span class="form__value">Комментарий к заказу</span>
@@ -108,16 +92,6 @@
                 <b>990 ₽</b>
                 <span>Артикул: 150030</span>
               </li>
-              <li class="cart__order">
-                <h3>Гироскутер Razor Hovertrax 2.0ii</h3>
-                <b>1 990 ₽</b>
-                <span>Артикул: 150030</span>
-              </li>
-              <li class="cart__order">
-                <h3>Электрический дрифт-карт Razor Lil’ Crazy</h3>
-                <b>4 090 ₽</b>
-                <span>Артикул: 150030</span>
-              </li>
             </ul>
 
             <div class="cart__total">
@@ -145,10 +119,14 @@
 
 <script>
 import Result from '@/components/Result.vue'
+import Breadcrumbs from '@/components/Breadcrumbs.vue'
+import Input from '@/components/Input.vue'
 
 export default {
   components: {
     Result,
+    Breadcrumbs,
+    Input,
   },
   data() {
     return {
