@@ -45,19 +45,12 @@
             <div class="cart__options">
               <h3 class="cart__title">Доставка</h3>
               <ul class="cart__options options">
-                <li class="options__item">
+                <li class="options__item" v-for="delivery in deliveries">
                   <label class="options__label">
-                    <input class="options__radio sr-only" type="radio" name="delivery" value="0" checked="">
+                    <input class="options__radio sr-only" type="radio" name="delivery" value="0" checked=""
+                      @click="changeDelivery(delivery)">
                     <span class="options__value">
-                      Самовывоз <b>бесплатно</b>
-                    </span>
-                  </label>
-                </li>
-                <li class="options__item">
-                  <label class="options__label">
-                    <input class="options__radio sr-only" type="radio" name="delivery" value="500">
-                    <span class="options__value">
-                      Курьером <b>290 ₽</b>
+                      {{ delivery.title }}: <b>{{ setDeliveryPrice(delivery.price) }}</b>
                     </span>
                   </label>
                 </li>
@@ -121,6 +114,9 @@
 import Result from '@/components/Result.vue'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
 import Input from '@/components/Input.vue'
+import useDeliveriesStore from '@/stores/deliveries'
+
+import { mapStores } from 'pinia'
 
 export default {
   components: {
@@ -131,12 +127,33 @@ export default {
   data() {
     return {
       orderIsProcessed: false,
+      deliveries: [],
+      currentDelivery: "",
     }
+  },
+  computed: {
+    ...mapStores(useDeliveriesStore)
   },
   methods: {
     viewResult() {
       this.orderIsProcessed = true
+    },
+    changeDelivery(delivery) {
+      this.currentDelivery = delivery
+      console.log(this.currentDelivery)
+    },
+    setDeliveryPrice(price) {
+      return price === '0' ? "Бесплатно" : `${price} ₽`
     }
+  },
+  created() {
+    useDeliveriesStore().getDeliveries()
+
+    this.deliveriesStore.$subscribe((mutation, state) => {
+      this.deliveries = state.deliveries
+      this.currentDelivery = this.deliveries[0]
+    })
+
   }
 }
 </script>
