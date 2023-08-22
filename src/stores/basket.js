@@ -8,7 +8,7 @@ export default defineStore('basket', {
     };
   },
   actions: {
-    async getBaskets(accessKey) {
+    async getBasket(accessKey, itemId, quantity) {
       await fetch(
         `https://vue-moire.skillbox.cc/api/baskets?userAccessKey=${accessKey}`
       )
@@ -19,8 +19,35 @@ export default defineStore('basket', {
         })
         .catch((error) => {
           console.error('Error:', error);
-          return;
         });
+    },
+    async updateBasketProduct(accessKey) {
+      const url = 'https://vue-moire.skillbox.cc/api/baskets/products';
+
+      const requestBody = new URLSearchParams();
+      requestBody.append('itemId', itemId);
+      requestBody.append('quantity', quantity);
+
+      const headers = {
+        accept: 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      };
+
+      const requestOptions = {
+        method: 'PUT',
+        headers: headers,
+        body: requestBody,
+      };
+
+      const fullUrl = `${url}?userAccessKey=${userAccessKey}`;
+
+      try {
+        const response = await fetch(fullUrl, requestOptions);
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error('Error:', error);
+      }
     },
     async addToBasket(accessKey, productId, colorId, sizeId, quantity) {
       const url = `https://vue-moire.skillbox.cc/api/baskets/products?userAccessKey=${accessKey}`;
