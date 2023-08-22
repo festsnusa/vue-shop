@@ -14,11 +14,12 @@ export default {
       categories: [],
       materials: [],
       seasons: [],
-      floorPrice: 0,
-      ceilPrice: 100,
+      floorPrice: "",
+      ceilPrice: "",
       currentCategory: 0,
       checkedMaterials: [],
       checkedCollections: [],
+      isFiltered: false,
     }
   },
   methods: {
@@ -31,6 +32,8 @@ export default {
       else if (checked && !itemIncluded) {
         this.checkedMaterials.push(id)
       }
+
+      this.isFiltered = true
     },
     checkCollections(id, checked) {
       let itemIncluded = this.checkedCollections.includes(id)
@@ -41,12 +44,20 @@ export default {
       else if (checked && !itemIncluded) {
         this.checkedCollections.push(id)
       }
+
+      this.isFiltered = true
     },
     setFilter() {
       useProductsStore().setFilter(this.floorPrice, this.ceilPrice, this.currentCategory, this.checkedMaterials, this.checkedCollections)
     },
     clearFilter() {
       useProductsStore().getProducts()
+
+      this.floorPrice = ""
+      this.ceilPrice = ""
+      this.currentCategory = 0
+      this.checkedMaterials = []
+      this.checkedCollections = []
     },
     handleBeforeUnload() {
       this.getProducts()
@@ -76,11 +87,13 @@ export default {
       <fieldset class="form__block">
         <legend class="form__legend">Цена</legend>
         <label class="form__label form__label--price">
-          <input class="form__input" type="text" name="min-price" v-model="floorPrice">
+          <input class="form__input" type="text" name="min-price" v-model="floorPrice" placeholder="0"
+            @change="isFiltered = true">
           <span class="form__value">От</span>
         </label>
         <label class="form__label form__label--price">
-          <input class="form__input" type="text" name="max-price" v-model="ceilPrice">
+          <input class="form__input" type="text" name="max-price" v-model="ceilPrice" placeholder="1000"
+            @change="isFiltered = true">
           <span class="form__value">До</span>
         </label>
       </fieldset>
@@ -88,7 +101,7 @@ export default {
       <fieldset class="form__block">
         <legend class="form__legend">Категория</legend>
         <label class="form__label form__label--select">
-          <select class="form__select" type="text" name="category" v-model="currentCategory">
+          <select class="form__select" type="text" name="category" v-model="currentCategory" @change="isFiltered = true">
             <option value="0" selected>Все категории</option>
             <option v-for="(category, i) in categories" :value="category.id" :key="categories">{{ category.title }}
             </option>
@@ -117,7 +130,7 @@ export default {
       <button class="filter__submit button button--primery" type="submit" @click.prevent="setFilter">
         Применить
       </button>
-      <button class="filter__reset button button--second" type="button" @click.prevent="clearFilter">
+      <button class="filter__reset button button--second" type="button" @click.prevent="clearFilter" v-show="isFiltered">
         Сбросить
       </button>
     </form>
