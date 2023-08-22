@@ -30,7 +30,12 @@ export default {
   },
   methods: {
     redirectToCheckout() {
-      // this.$router.push({ name: 'checkout' })
+      if (this.totalPrice === 0) {
+        alert("В корзине пусто!")
+        return
+      }
+
+      this.$router.push({ name: 'checkout' })
     },
     calculateTotal() {
 
@@ -78,7 +83,7 @@ export default {
     </div>
 
     <section class="cart">
-      <form class="cart__form form" @submit.prevent="redirectToCheckout" method="POST">
+      <form class="cart__form form" @submit.prevent>
         <div class="cart__field">
           <ul class="cart__list">
             <CartItem v-for="item in items" :item="item" :key="items" />
@@ -93,7 +98,7 @@ export default {
             Итого: <span>{{ totalPrice }} ₽</span>
           </p>
 
-          <button class="cart__button button button--primery" type="submit">
+          <button class="cart__button button button--primery" type="submit" @click="redirectToCheckout">
             Оформить заказ
           </button>
         </div>
