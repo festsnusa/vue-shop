@@ -11,6 +11,12 @@
         {{ category }}
       </li>
     </a>
+    <span v-show="checkout"> — </span>
+    <RouterLink to="/cart" v-show="checkout">
+      <li class="breadcrumbs__item">
+        Корзина
+      </li>
+    </RouterLink>
     <span> — </span>
     <li class="breadcrumbs__item">
       {{ title }}
@@ -20,7 +26,11 @@
 
 <script>
 export default {
-  props: ["category", "title"],
+  props: ["category", "checkout", "title"],
+  created() {
+    console.log(this.checkout)
+    console.log(this.title)
+  }
 }
 </script>
 
