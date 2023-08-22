@@ -21,11 +21,11 @@ export default defineStore('basket', {
           console.error('Error:', error);
         });
     },
-    async updateBasketProduct(accessKey) {
+    async updateBasketProduct(accessKey, itemId, quantity) {
       const url = 'https://vue-moire.skillbox.cc/api/baskets/products';
 
       const requestBody = new URLSearchParams();
-      requestBody.append('itemId', itemId);
+      requestBody.append('basketItemId', itemId);
       requestBody.append('quantity', quantity);
 
       const headers = {
@@ -39,14 +39,20 @@ export default defineStore('basket', {
         body: requestBody,
       };
 
-      const fullUrl = `${url}?userAccessKey=${userAccessKey}`;
+      const fullUrl = `${url}?userAccessKey=${accessKey}`;
 
       try {
         const response = await fetch(fullUrl, requestOptions);
         const data = await response.json();
-        console.log(data);
+        if (data.error) {
+          alert(`Ошибка. Код: ${data.error.code}; ${data.error.message}`);
+          console.error(data.error);
+          return;
+        }
+
+        this.basket = data.items;
       } catch (error) {
-        console.error('Error:', error);
+        alert(`Ошибка: ${error}`);
       }
     },
     async addToBasket(accessKey, productId, colorId, sizeId, quantity) {
