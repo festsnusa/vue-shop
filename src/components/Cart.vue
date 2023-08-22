@@ -32,6 +32,15 @@ export default {
     redirectToCheckout() {
       // this.$router.push({ name: 'checkout' })
     },
+    calculateTotal() {
+
+      this.totalPrice = 0
+
+      this.items.map(item => {
+        console.log(this.totalPrice)
+        this.totalPrice += item.price * item.quantity
+      })
+    }
   },
   created() {
 
@@ -46,7 +55,7 @@ export default {
 
     this.basketStore.$subscribe((mutation, state) => {
       this.items = state.basket
-      console.log(this.items)
+      this.calculateTotal()
     })
   }
 }
@@ -80,7 +89,7 @@ export default {
           <p class="cart__desc">
             Мы&nbsp;посчитаем стоимость доставки на&nbsp;следующем этапе
           </p>
-          <p class="cart__price">
+          <p class="cart__price" :key="totalPrice">
             Итого: <span>{{ totalPrice }} ₽</span>
           </p>
 
