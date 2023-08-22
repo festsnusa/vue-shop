@@ -4,6 +4,7 @@ export default defineStore('basket', {
   state: () => {
     return {
       basket: [],
+      itemsCount: 0,
     };
   },
   actions: {
@@ -14,6 +15,7 @@ export default defineStore('basket', {
         .then((response) => response.json())
         .then((data) => {
           this.basket = data.items;
+          this.updateItemsCount(data.items.length);
         })
         .catch((error) => {
           console.error('Error:', error);
@@ -41,11 +43,13 @@ export default defineStore('basket', {
         }
 
         const data = await response.json();
-        return data; // You can do something with the response data here
+        this.updateItemsCount(data.items.length);
       } catch (error) {
         console.error('Error:', error);
-        return null;
       }
+    },
+    updateItemsCount(itemsCount) {
+      this.itemsCount = itemsCount;
     },
   },
   // persist: true,
