@@ -32,9 +32,6 @@ export default {
     redirectToCheckout() {
       // this.$router.push({ name: 'checkout' })
     },
-    updateTotalPrice(itemId) {
-
-    }
   },
   created() {
 
@@ -75,7 +72,7 @@ export default {
       <form class="cart__form form" @submit.prevent="redirectToCheckout" method="POST">
         <div class="cart__field">
           <ul class="cart__list">
-            <CartItem v-for="item in items" :item="item" :updateTotalPrice="updateTotalPrice" />
+            <CartItem v-for="item in items" :item="item" :key="items" />
           </ul>
         </div>
 
