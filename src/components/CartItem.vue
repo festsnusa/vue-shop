@@ -1,8 +1,7 @@
 <template>
   <li class="cart__item product">
     <div class="product__pic">
-      <img :src="item.color.gallery[0].file.url" width="120" height="120" srcset="img/product-square-4@2x.jpg 2x"
-        alt="Название товара">
+      <img :src="setImage(item)" width="120" height="120" srcset="img/product-square-4@2x.jpg 2x" alt="Название товара">
     </div>
     <h3 class="product__title">
       {{ item.product.title }}
@@ -57,6 +56,9 @@ export default {
     }
   },
   methods: {
+    setImage(item) {
+      return (item.color.gallery === null) ? "/src/assets/img/not-available.png" : item.color.gallery[0].file.url
+    },
     changeQuantity(operation) {
       // if (operation === "-") {
       //   this.quantity--

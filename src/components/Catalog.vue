@@ -57,7 +57,7 @@ export default {
       }
 
       if (foundObject.colors[0].gallery === null) {
-        return ""
+        return "/src/assets/img/not-available.png"
       }
       return foundObject.colors[0].gallery[0].file.url
     },
