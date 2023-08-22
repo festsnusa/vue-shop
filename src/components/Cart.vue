@@ -1,9 +1,54 @@
 <script>
+import { mapStores } from 'pinia';
+import useBasketStore from "@/stores/basket"
+import useAccessKeyStore from "@/stores/accessKey"
+
+import CartItem from "@/components/CartItem.vue"
+
 export default {
+  data() {
+    return {
+      items: [],
+      totalPrice: 0,
+    }
+  },
+  components: {
+    CartItem
+  },
+  computed: {
+    ...mapStores(useBasketStore),
+    computeItemsCount() {
+      const itemsLength = this.items.length
+      const arr = [2, 3, 4]
+      return itemsLength === 0 ? "Нет выбранных товаров"
+        : itemsLength === 1 ? "1 товар"
+          : arr.includes(itemsLength) ? `${itemsLength} товара`
+            : `${itemsLength} товаров`
+    }
+  },
   methods: {
     redirectToCheckout() {
-      this.$router.push({ name: 'checkout' })
+      // this.$router.push({ name: 'checkout' })
+    },
+    updateTotalPrice(itemId) {
+
     }
+  },
+  created() {
+
+    let accessKey = useAccessKeyStore().accessKey
+
+    if (accessKey === "") {
+      useAccessKeyStore().setAccessKey()
+      accessKey = useAccessKeyStore().accessKey
+    }
+
+    useBasketStore().getBasket(accessKey)
+
+    this.basketStore.$subscribe((mutation, state) => {
+      this.items = state.basket
+      console.log(this.items)
+    })
   }
 }
 </script>
@@ -29,7 +74,8 @@ export default {
           Корзина
         </h1>
         <span class="content__info">
-          3 товара
+          <!-- 3 товара -->
+          {{ computeItemsCount }}
         </span>
       </div>
     </div>
@@ -38,47 +84,7 @@ export default {
       <form class="cart__form form" @submit.prevent="redirectToCheckout" method="POST">
         <div class="cart__field">
           <ul class="cart__list">
-            <li class="cart__item product">
-              <div class="product__pic">
-                <img src="img/product-square-4.jpg" width="120" height="120" srcset="img/product-square-4@2x.jpg 2x"
-                  alt="Название товара">
-              </div>
-              <h3 class="product__title">
-                Базовая хлопковая футболка
-              </h3>
-              <p class="product__info product__info--color">
-                Цвет:
-                <span>
-                  <i style="background-color: #FF9B78"></i>
-                  Персиковый
-                </span>
-              </p>
-              <span class="product__code">
-                Артикул: 1501230
-              </span>
-
-              <div class="product__counter form__counter">
-                <button type="button" aria-label="Убрать один товар">
-                  -
-                </button>
-
-                <input type="text" value="1" name="count">
-
-                <button type="button" aria-label="Добавить один товар">
-                  +
-                </button>
-              </div>
-
-              <b class="product__price">
-                990 ₽
-              </b>
-
-              <button class="product__del button-del" type="button" aria-label="Удалить товар из корзины">
-                <svg width="20" height="20" fill="currentColor">
-                  <use xlink:href="#icon-close"></use>
-                </svg>
-              </button>
-            </li>
+            <CartItem v-for="item in items" :item="item" :updateTotalPrice="updateTotalPrice" />
           </ul>
         </div>
 
@@ -87,7 +93,7 @@ export default {
             Мы&nbsp;посчитаем стоимость доставки на&nbsp;следующем этапе
           </p>
           <p class="cart__price">
-            Итого: <span>4 070 ₽</span>
+            Итого: <span>{{ totalPrice }} ₽</span>
           </p>
 
           <button class="cart__button button button--primery" type="submit">
