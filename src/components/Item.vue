@@ -1,21 +1,8 @@
 <template>
   <main class="content container">
     <div class="content__top">
-      <ul class="breadcrumbs">
-        <li class="breadcrumbs__item">
-          <RouterLink class="breadcrumbs__link" to="/">
-            Каталог
-          </RouterLink>
-        </li>
-        <li class="breadcrumbs__item">
-          {{ category }}
-        </li>
-        <li class="breadcrumbs__item">
-          {{ title }}
-        </li>
-      </ul>
+      <Breadcrumbs :category="category" :title="title" />
     </div>
-    <h1>{{ sizeId }}</h1>
     <section class="item">
       <div class="item__pics pics">
         <div class="pics__wrapper">
@@ -114,6 +101,7 @@
 <script>
 import ItemContent from '@/components/ItemContent.vue';
 import ItemProperty from '@/components/ItemProperty.vue';
+import Breadcrumbs from '@/components/Breadcrumbs.vue'
 
 import { mapStores } from 'pinia';
 import useProductsStore from '@/stores/products'
@@ -124,6 +112,7 @@ export default {
   components: {
     ItemContent,
     ItemProperty,
+    Breadcrumbs,
   },
   computed: {
     ...mapStores(useProductsStore),
@@ -159,7 +148,7 @@ export default {
     changeTotal() {
       this.total = this.price * this.itemsNum
     },
-    changeCurrentColorId(id) {
+    changeCurrentColor(id) {
       this.colorId = id
     },
     changeCurrentImage(id, index) {
