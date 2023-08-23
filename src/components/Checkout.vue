@@ -86,7 +86,8 @@
             </ul>
 
             <div class="cart__total">
-              <p>Доставка: <b>бесплатно</b></p>
+              <p>{{ currentDelivery.title }}: <b>{{ setDeliveryPrice(currentDelivery.price) }}</b>
+              </p>
               <p>Итого: <b>{{ computeItemsCount }}</b> на сумму <b>{{ totalPrice }} ₽</b></p>
             </div>
 
@@ -153,7 +154,7 @@ export default {
         : itemsLength === 1 ? "1 товар"
           : arr.includes(itemsLength) ? `${itemsLength} товара`
             : `${itemsLength} товаров`
-    }
+    },
   },
   methods: {
     updateInputValue(inputEl, newValue) {
@@ -212,7 +213,7 @@ export default {
     onSubmit() {
       if (!this.isFieldsChecked) return
       useOrderStore().placeOrder(this.accessKey, this.fullName, this.fullAddress, this.phoneNumber, this.emailAddress, this.currentDelivery.id, this.currentPayment.id, this.commentText)
-      this.$router.push({ name: 'order' })
+      this.viewResult()
     },
   },
   created() {
