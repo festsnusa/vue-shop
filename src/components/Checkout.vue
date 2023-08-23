@@ -29,7 +29,7 @@
       </div>
 
       <section class="cart" v-if="!orderIsProcessed">
-        <form class="cart__form form" @submit.prevent="viewResult" method="POST">
+        <form class="cart__form form" @submit.prevent>
           <div class="cart__field">
             <div class="cart__data">
               <Input value="ФИО" name="name" type="text" placeholder="Введите ваше полное имя" />
@@ -45,10 +45,10 @@
             <div class="cart__options">
               <h3 class="cart__title">Доставка</h3>
               <ul class="cart__options options">
-                <li class="options__item" v-for="delivery in deliveries">
+                <li class="options__item" v-for="(delivery, i) in deliveries">
                   <label class="options__label">
-                    <input class="options__radio sr-only" type="radio" name="delivery" value="0" checked=""
-                      @click="changeDelivery(delivery)">
+                    <input class="options__radio sr-only" type="radio" name="delivery" :value="delivery.id"
+                      :checked="i === 0" @click="changeDelivery(delivery)">
                     <span class="options__value">
                       {{ delivery.title }}: <b>{{ setDeliveryPrice(delivery.price) }}</b>
                     </span>
@@ -58,45 +58,45 @@
 
               <h3 class="cart__title">Оплата</h3>
               <ul class="cart__options options">
-                <li class="options__item">
+                <li class="options__item" v-for="(payment, i) in payments">
                   <label class="options__label">
-                    <input class="options__radio sr-only" type="radio" name="pay" value="card" checked="">
+                    <input class="options__radio sr-only" type="radio" name="pay" :value="payment.id" :checked="i === 0">
                     <span class="options__value">
-                      Картой при получении
+                      {{ payment.title }}
                     </span>
                   </label>
                 </li>
-                <li class="options__item">
+                <!-- <li class="options__item">
                   <label class="options__label">
                     <input class="options__radio sr-only" type="radio" name="pay" value="cash">
                     <span class="options__value">
                       Наличными при получении
                     </span>
                   </label>
-                </li>
+                </li> -->
               </ul>
             </div>
           </div>
 
           <div class="cart__block">
             <ul class="cart__orders">
-              <li class="cart__order">
-                <h3>Смартфон Xiaomi Redmi Note 7 Pro 6/128GB</h3>
-                <b>990 ₽</b>
+              <li class="cart__order" v-for="item in items">
+                <h3>{{ item.product.title }}</h3>
+                <b> {{ item.price * item.quantity }}₽</b>
                 <span>Артикул: 150030</span>
               </li>
             </ul>
 
             <div class="cart__total">
               <p>Доставка: <b>бесплатно</b></p>
-              <p>Итого: <b>3</b> товара на сумму <b>4 070 ₽</b></p>
+              <p>Итого: <b>{{ computeItemsCount }}</b> на сумму <b>{{ totalPrice }} ₽</b></p>
             </div>
 
-            <button class="cart__button button button--primery" type="submit">
+            <button class="cart__button button button--primery">
               Оформить заказ
             </button>
           </div>
-          <div class="cart__error form__error-block">
+          <div class="cart__error form__error-block" v-show="errorOccured">
             <h4>Заявка не отправлена!</h4>
             <p>
               Похоже произошла ошибка. Попробуйте отправить снова или перезагрузите страницу.
@@ -114,7 +114,10 @@
 import Result from '@/components/Result.vue'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
 import Input from '@/components/Input.vue'
+import useAccessKeyStore from '@/stores/accessKey'
+import useBasketStore from '@/stores/basket'
 import useDeliveriesStore from '@/stores/deliveries'
+import usePaymentsStore from '@/stores/payments'
 
 import { mapStores } from 'pinia'
 
@@ -129,10 +132,23 @@ export default {
       orderIsProcessed: false,
       deliveries: [],
       currentDelivery: "",
+      items: [],
+      totalPrice: 0,
+      errorOccured: false,
+      payments: [],
+      currentPayment: [],
     }
   },
   computed: {
-    ...mapStores(useDeliveriesStore)
+    ...mapStores(useBasketStore, useDeliveriesStore, usePaymentsStore),
+    computeItemsCount() {
+      const itemsLength = this.items.length
+      const arr = [2, 3, 4]
+      return itemsLength === 0 ? "0"
+        : itemsLength === 1 ? "1 товар"
+          : arr.includes(itemsLength) ? `${itemsLength} товара`
+            : `${itemsLength} товаров`
+    }
   },
   methods: {
     viewResult() {
@@ -141,9 +157,21 @@ export default {
     changeDelivery(delivery) {
       this.currentDelivery = delivery
       console.log(this.currentDelivery)
+      this.updatePayments()
     },
     setDeliveryPrice(price) {
       return price === '0' ? "Бесплатно" : `${price} ₽`
+    },
+    updatePayments() {
+      usePaymentsStore().getPayments(this.currentDelivery.id)
+    },
+    calculateTotal() {
+
+      this.totalPrice = 0
+
+      this.items.map(item => {
+        this.totalPrice += item.price * item.quantity
+      })
     }
   },
   created() {
@@ -152,6 +180,25 @@ export default {
     this.deliveriesStore.$subscribe((mutation, state) => {
       this.deliveries = state.deliveries
       this.currentDelivery = this.deliveries[0]
+      this.updatePayments()
+    })
+
+    this.paymentsStore.$subscribe((mutation, state) => {
+      this.payments = state.payments
+    })
+
+    let accessKey = useAccessKeyStore().accessKey
+
+    if (accessKey === "") {
+      useAccessKeyStore().setAccessKey()
+      accessKey = useAccessKeyStore().accessKey
+    }
+
+    useBasketStore().getBasket(accessKey)
+
+    this.basketStore.$subscribe((mutation, state) => {
+      this.items = state.basket
+      this.calculateTotal()
     })
 
   }
