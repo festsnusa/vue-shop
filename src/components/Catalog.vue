@@ -1,7 +1,7 @@
 <template>
   <section class="catalog">
     <ul class="catalog__list">
-      <li class="catalog__item" v-for="(product, i) in products">
+      <li class="catalog__item" v-for="(product, i) in paginatedData">
         <CatalogImage :id="product.id" :currentImage="setCurrentImage(product.id)" />
 
         <h3 class="catalog__title">
@@ -26,6 +26,7 @@
         </ul>
       </li>
     </ul>
+    <Pagination :totalPages="totalPages" @updatePageNum="updatePageNum" />
   </section>
 </template>
 
@@ -34,21 +35,34 @@ import { mapStores } from 'pinia';
 import useProductsStore from '@/stores/products'
 import useColorsStore from '@/stores/colors'
 import CatalogImage from '@/components/CatalogImage.vue'
+import Pagination from '@/components/Pagination.vue'
 
 export default {
   computed: {
-    ...mapStores(useProductsStore, useColorsStore)
+    ...mapStores(useProductsStore, useColorsStore),
+    paginatedData() {
+      return this.products.slice((this.page - 1) * this.perPage, this.page * this.perPage)
+    },
   },
   components: {
-    CatalogImage,
+    CatalogImage, Pagination,
   },
   data() {
     return {
       products: [],
       colors: [],
+      totalPages: 0,
+      page: 1,
+      perPage: 12,
     }
   },
   methods: {
+    updatePageNum(newVal) {
+      this.page = newVal
+    },
+    setTotalPages() {
+      this.totalPages = Math.ceil(this.products.length / this.perPage)
+    },
     setCurrentImage(id) {
       const foundObject = this.products.find(obj => obj.id === id)
 
@@ -74,6 +88,7 @@ export default {
 
     this.productsStore.$subscribe((mutation, state) => {
       this.products = this.productsStore.products
+      this.setTotalPages()
     })
 
     this.products.forEach(e => {
@@ -86,7 +101,6 @@ export default {
       this.colors = state.colors
     })
 
-    console.log(this.products)
   }
 }
 </script>
