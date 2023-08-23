@@ -82,6 +82,39 @@ export default defineStore('basket', {
         console.error('Error:', error);
       }
     },
+    async deleteBasketProduct(accessKey, itemId) {
+      const url = `https://vue-moire.skillbox.cc/api/baskets/products?userAccessKey=${accessKey}`;
+      const headers = {
+        accept: 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      };
+
+      const data = new URLSearchParams();
+      data.append('basketItemId', itemId);
+
+      try {
+        const response = await fetch(url, {
+          method: 'DELETE',
+          headers: headers,
+          body: data.toString(),
+        });
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            `API error: ${responseData.message || response.statusText}`
+          );
+        } else {
+          console.log(responseData);
+          this.basket = responseData.items;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        return null;
+      }
+    },
+
     updateItemsCount(itemsCount) {
       this.itemsCount = itemsCount;
     },

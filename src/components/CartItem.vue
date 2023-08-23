@@ -28,10 +28,8 @@
       {{ price }} ₽
     </b>
 
-    <button class="product__del button-del" type="button" aria-label="Удалить товар из корзины">
-      <svg width="20" height="20" fill="currentColor">
-        <use xlink:href="#icon-close"></use>
-      </svg>
+    <button class="product__del button-del" type="button" aria-label="Удалить товар из корзины" @click="deleteItem">
+      <img src="@/assets/img/close.png" alt="close">
     </button>
   </li>
 </template>
@@ -46,6 +44,7 @@ export default {
     return {
       quantity: this.item.quantity,
       price: this.item.price * this.item.quantity,
+      accessKey: "",
       colors: {
         "red": "Красный",
         "blue": "Синий",
@@ -73,12 +72,23 @@ export default {
       } else {
         this.quantity++
       }
-
-      let accessKey = useAccessKeyStore().accessKey
-      useBasketStore().updateBasketProduct(accessKey, this.item.id, this.quantity)
+      this.accessKey = useAccessKeyStore().accessKey
+      useBasketStore().updateBasketProduct(this.accessKey, this.item.id, this.quantity)
     },
+    deleteItem() {
+      this.accessKey = useAccessKeyStore().accessKey
+      console.log(this.accessKey)
+      useBasketStore().deleteBasketProduct(this.accessKey, this.item.id)
+    },
+    created() {
+      this.accessKey = useAccessKeyStore().accessKey
+    }
   }
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.button-del {
+  cursor: pointer;
+}
+</style>
