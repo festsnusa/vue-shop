@@ -2,7 +2,7 @@
   <main class="content container">
     <div class="checkout" v-if="!orderIsProcessed">
       <div class="content__top">
-        <Breadcrumbs :сheckout="true" title="Корзина" />
+        <Breadcrumbs :сheckout="true" title="Оформление заказа" />
         <!-- <ul class="breadcrumbs">
           <li class="breadcrumbs__item">
             <a class="breadcrumbs__link" href="index.html">
@@ -95,7 +95,7 @@
               Оформить заказ
             </button>
           </div>
-          <div class="cart__error form__error-block" v-show="errorOccured">
+          <div class="cart__error form__error-block" v-show="errorOccured" :key="errorOccured">
             <h4>Заявка не отправлена!</h4>
             <p>
               Похоже произошла ошибка. Попробуйте отправить снова или перезагрузите страницу.
@@ -146,7 +146,7 @@ export default {
     }
   },
   computed: {
-    ...mapStores(useBasketStore, useDeliveriesStore, usePaymentsStore),
+    ...mapStores(useBasketStore, useDeliveriesStore, usePaymentsStore, useOrderStore),
     computeItemsCount() {
       const itemsLength = this.items.length
       const arr = [2, 3, 4]
@@ -173,7 +173,6 @@ export default {
     },
     changeDelivery(delivery) {
       this.currentDelivery = delivery
-      console.log(this.currentDelivery)
       this.updatePayments()
     },
     changePayment(payment) {
@@ -217,7 +216,6 @@ export default {
     onSubmit() {
       if (!this.isFieldsChecked()) return
       useOrderStore().placeOrder(this.accessKey, this.fullName, this.fullAddress, this.phoneNumber, this.emailAddress, this.currentDelivery.id, this.currentPayment.id, this.commentText)
-      this.viewResult()
     },
   },
   created() {
@@ -246,6 +244,18 @@ export default {
     this.basketStore.$subscribe((mutation, state) => {
       this.items = state.basket
       this.calculateTotal()
+    })
+
+    // watch status
+    this.status = "200"
+    this.orderStore.$subscribe((mutation, state) => {
+      this.status = state.status
+
+      if (this.status == 200) {
+        this.viewResult()
+      } else {
+        this.errorOccured = true
+      }
     })
 
   }

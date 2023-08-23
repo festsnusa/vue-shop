@@ -4,6 +4,7 @@ export default defineStore('order', {
   state: () => {
     return {
       order: [],
+      status: '',
     };
   },
   actions: {
@@ -43,6 +44,9 @@ export default defineStore('order', {
           `${url}?userAccessKey=${accessKey}`,
           requestOptions
         );
+
+        this.status = response.status;
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }

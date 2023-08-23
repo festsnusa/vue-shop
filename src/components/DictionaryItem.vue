@@ -13,9 +13,5 @@
 export default {
   name: "DictionaryItem",
   props: ["keyValue", "value"],
-  created() {
-    console.log(this.keyValue)
-    console.log(this.value)
-  }
 }
 </script>
