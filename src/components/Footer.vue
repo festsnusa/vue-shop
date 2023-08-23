@@ -6,14 +6,6 @@ const links = [
   { "title": "Распродажа", "link": "#" },
   { "title": "Заказать звонок", "link": "#" },
 ]
-
-const socials = [
-  { "title": "vk", "label": "Вконтакте", "link": "https://vk.com" },
-  { "title": "instagram", "label": "Инстаграм", "link": "https://instagram.com" },
-  { "title": "facebook", "label": "Facebook", "link": "https://facebook.com" },
-  { "title": "twitter", "label": "Twitter", "link": "https://twitter.com" },
-  { "title": "telegram", "label": "Telegram", "link": "https://web.telegram.org/" },
-]
 </script>
 
 <template>
@@ -28,9 +20,29 @@ const socials = [
       </ul>
 
       <ul class="footer__social social">
-        <li class="social__item" v-for="(item, index) in socials" :key="index">
-          <a class="social__link" :href="item.link" :aria-label="item.label">
-            <img class="social__img" :src="`/src/assets/img/socials/${item.title}.png`" :alt="item.label">
+        <li class="social__item">
+          <a class="social__link" href="https://vk.com" aria-label="Вконтакте">
+            <img class="social__img" src="@/assets/img/socials/vk.png" :alt="vk">
+          </a>
+        </li>
+        <li class="social__item">
+          <a class="social__link" href="https://instagram.com" aria-label="instagram">
+            <img class="social__img" src="@/assets/img/socials/instagram.png" :alt="instagram">
+          </a>
+        </li>
+        <li class="social__item">
+          <a class="social__link" href="https://facebook.com" aria-label="facebook">
+            <img class="social__img" src="@/assets/img/socials/facebook.png" :alt="facebook">
+          </a>
+        </li>
+        <li class="social__item">
+          <a class="social__link" href="https://twitter.com" aria-label="twitter">
+            <img class="social__img" src="@/assets/img/socials/twitter.png" :alt="twitter">
+          </a>
+        </li>
+        <li class="social__item">
+          <a class="social__link" href="https://telegram.com" aria-label="telegram">
+            <img class="social__img" src="@/assets/img/socials/telegram.png" :alt="telegram">
           </a>
         </li>
       </ul>
