@@ -7,7 +7,6 @@
           Каталог
         </h1>
         <span class="content__info">
-          <!-- 152 товара -->
           {{ computeItemsQuantity }}
         </span>
       </div>
@@ -32,8 +31,6 @@ import useAccessKeyStore from '@/stores/accessKey'
 import useMaterialsStore from '@/stores/materials'
 import useCategoriesStore from '@/stores/categories'
 import useSeasonsStore from '@/stores/seasons'
-
-// import { setAccessKey, getBaskets, getColors, getMaterials, getCategories, getSeasons, getProducts } from '@/includes/helper'
 
 export default {
   components: {
@@ -66,9 +63,7 @@ export default {
       useColorsStore().getColors()
     }
 
-    // if (!useProductsStore().products.length) {
     useProductsStore().getProducts()
-    // }
 
     if (!useMaterialsStore().materials.length) {
       useMaterialsStore().getMaterials()
@@ -83,8 +78,6 @@ export default {
     }
 
     useBasketStore().getBasket(useAccessKeyStore().accessKey)
-    // console.log(this.productsStore.products)
-
     console.log(useAccessKeyStore().accessKey)
 
   }

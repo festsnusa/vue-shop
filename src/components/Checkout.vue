@@ -2,30 +2,7 @@
   <main class="content container">
     <div class="checkout" v-if="!orderIsProcessed">
       <div class="content__top">
-        <Breadcrumbs :сheckout="true" title="Оформление заказа" />
-        <!-- <ul class="breadcrumbs">
-          <li class="breadcrumbs__item">
-            <a class="breadcrumbs__link" href="index.html">
-              Каталог
-            </a>
-          </li>
-          <li class="breadcrumbs__item">
-            <a class="breadcrumbs__link" href="cart.html">
-              Корзина
-            </a>
-          </li>
-          <li class="breadcrumbs__item">
-            <a class="breadcrumbs__link">
-              Оформление заказа
-            </a>
-          </li>
-        </ul>
-
-        <div class="content__row">
-          <h1 class="content__title">
-            Оформление заказа
-          </h1>
-        </div> -->
+        <Breadcrumbs :сheckout="currentDelivery" title="Оформление заказа" />
       </div>
 
       <section class="cart" v-if="!orderIsProcessed">
