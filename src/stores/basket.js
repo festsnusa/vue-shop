@@ -8,7 +8,7 @@ export default defineStore('basket', {
     };
   },
   actions: {
-    async getBasket(accessKey, itemId, quantity) {
+    async getBasket(accessKey) {
       await fetch(
         `https://vue-moire.skillbox.cc/api/baskets?userAccessKey=${accessKey}`
       )

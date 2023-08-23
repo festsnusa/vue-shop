@@ -28,7 +28,6 @@ export default defineStore('products', {
         })
         .catch((error) => {
           console.error('Error:', error);
-          return;
         });
     },
     setFilter(minPrice, maxPrice, category, materials, seasons) {
