@@ -1,7 +1,7 @@
 <template>
   <li class="dictionary__item">
     <span class="dictionary__key">
-      {{ key }}
+      {{ keyValue }}
     </span>
     <span class="dictionary__value">
       {{ value }}
@@ -12,6 +12,10 @@
 <script>
 export default {
   name: "DictionaryItem",
-  props: ["key", "value"],
+  props: ["keyValue", "value"],
+  created() {
+    console.log(this.keyValue)
+    console.log(this.value)
+  }
 }
 </script>

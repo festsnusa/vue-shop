@@ -42,7 +42,6 @@ export default {
       this.totalPrice = 0
 
       this.items.map(item => {
-        console.log(this.totalPrice)
         this.totalPrice += item.price * item.quantity
       })
     }

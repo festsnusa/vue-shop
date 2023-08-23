@@ -100,4 +100,8 @@ export default {
 .next {
   transform: rotate(-90deg);
 }
+
+.pagination__link {
+  cursor: pointer;
+}
 </style>

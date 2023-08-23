@@ -88,6 +88,7 @@ export default {
 
     this.productsStore.$subscribe((mutation, state) => {
       this.products = this.productsStore.products
+      this.page = 1
       this.setTotalPages()
     })
 

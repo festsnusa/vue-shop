@@ -28,8 +28,8 @@
 export default {
   props: ["category", "checkout", "title"],
   created() {
-    console.log(this.checkout)
-    console.log(this.title)
+    // console.log(this.checkout)
+    // console.log(this.title)
   }
 }
 </script>

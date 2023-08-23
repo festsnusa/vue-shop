@@ -14,7 +14,6 @@ export default defineStore('payments', {
         .then((response) => response.json())
         .then((data) => {
           this.payments = data;
-          console.log(data);
         })
         .catch((error) => {
           console.error('Error:', error);

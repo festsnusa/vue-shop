@@ -13,11 +13,9 @@ export default defineStore('products', {
         .then((response) => response.json())
         .then((data) => {
           this.currentProduct = data;
-          console.log(this.currentProduct);
         })
         .catch((error) => {
           console.error('Error:', error);
-          return;
         });
     },
     async getProducts(query = '') {
@@ -31,8 +29,6 @@ export default defineStore('products', {
         });
     },
     setFilter(minPrice, maxPrice, category, materials, seasons) {
-      console.log(minPrice, maxPrice, category, materials, seasons);
-
       let queryArr = [];
 
       // price

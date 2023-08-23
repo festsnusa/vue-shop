@@ -16,11 +16,11 @@
           </p>
 
           <ul class="dictionary">
-            <DictionaryItem key="Получатель" :value="basket.name" />
-            <DictionaryItem key="Адрес доставки" :value="basket.address" />
-            <DictionaryItem key="Телефон" :value="basket.phone" />
-            <DictionaryItem key="Email" :value="basket.email" />
-            <DictionaryItem key="Способ оплаты" :value="basket.paymentType" />
+            <DictionaryItem keyValue="Получатель" :value="basket.name" />
+            <DictionaryItem keyValue="Адрес доставки" :value="basket.address" />
+            <DictionaryItem keyValue="Телефон" :value="basket.phone" />
+            <DictionaryItem keyValue="Email" :value="basket.email" />
+            <DictionaryItem keyValue="Способ оплаты" :value="basket.paymentType" />
           </ul>
         </div>
 

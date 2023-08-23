@@ -193,6 +193,10 @@ export default {
         this.totalPrice += item.price * item.quantity
       })
     },
+    isEmailValidated() {
+      let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}')
+      return regex.test(this.emailAddress)
+    },
     isFieldsChecked() {
       if (this.fullName === '') {
         alert("Необходимо заполнить ФИО")
@@ -203,7 +207,7 @@ export default {
       } else if (this.phoneNumber.length < 17) {
         alert("Необходимо заполнить номер телефона")
         return false
-      } else if (this.fullName === '') {
+      } else if (!this.isEmailValidated()) {
         alert("Необходимо заполнить адрес электронной почты")
         return false
       }
@@ -211,7 +215,7 @@ export default {
       return true
     },
     onSubmit() {
-      if (!this.isFieldsChecked) return
+      if (!this.isFieldsChecked()) return
       useOrderStore().placeOrder(this.accessKey, this.fullName, this.fullAddress, this.phoneNumber, this.emailAddress, this.currentDelivery.id, this.currentPayment.id, this.commentText)
       this.viewResult()
     },

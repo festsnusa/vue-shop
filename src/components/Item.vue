@@ -178,13 +178,10 @@ export default {
       this.colors = this.currentProduct.colors
       this.price = this.currentProduct.price
       this.total = this.price * this.itemsNum
-      console.log(this.currentProduct)
 
       let location = this.currentProduct.colors[0].gallery === null ? this.currentProduct.colors[1].gallery[0] : this.currentProduct.colors[0].gallery[0]
       this.currentImage = location.file.url
       this.colorId = this.currentProduct.colors[0].color.id
-      console.log(this.currentImage)
-      console.log(this.colorId)
     })
 
   }
