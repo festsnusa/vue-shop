@@ -29,15 +29,20 @@
       </div>
 
       <section class="cart" v-if="!orderIsProcessed">
-        <form class="cart__form form" @submit.prevent>
+        <div class="cart__form form">
           <div class="cart__field">
             <div class="cart__data">
-              <Input value="ФИО" name="name" type="text" placeholder="Введите ваше полное имя" />
-              <Input value="Адрес доставки" name="address" type="text" placeholder="Введите ваш адрес" />
-              <Input value="Телефон" name="phone" type="tel" placeholder="Введите ваш телефон" />
-              <Input value="Email" name="email" type="email" placeholder="Введи ваш Email" />
+              <Input @updateValue="updateInputValue" value="ФИО" name="name" type="text"
+                placeholder="Введите ваше полное имя" />
+              <Input @updateValue="updateInputValue" value="Адрес доставки" name="address" type="text"
+                placeholder="Введите ваш адрес" />
+              <Input @updateValue="updateInputValue" value="Телефон" name="phone" type="tel"
+                placeholder="Введите ваш телефон" />
+              <Input @updateValue="updateInputValue" value="Email" name="email" type="email"
+                placeholder="Введи ваш Email" />
               <label class="form__label">
-                <textarea class="form__input form__input--area" name="comments" placeholder="Ваши пожелания"></textarea>
+                <textarea class="form__input form__input--area" name="comments" placeholder="Ваши пожелания"
+                  v-model="commentText"></textarea>
                 <span class="form__value">Комментарий к заказу</span>
               </label>
             </div>
@@ -60,20 +65,13 @@
               <ul class="cart__options options">
                 <li class="options__item" v-for="(payment, i) in payments">
                   <label class="options__label">
-                    <input class="options__radio sr-only" type="radio" name="pay" :value="payment.id" :checked="i === 0">
+                    <input class="options__radio sr-only" type="radio" name="pay" :value="payment.id" :checked="i === 0"
+                      @click="changePayment(payment)">
                     <span class="options__value">
                       {{ payment.title }}
                     </span>
                   </label>
                 </li>
-                <!-- <li class="options__item">
-                  <label class="options__label">
-                    <input class="options__radio sr-only" type="radio" name="pay" value="cash">
-                    <span class="options__value">
-                      Наличными при получении
-                    </span>
-                  </label>
-                </li> -->
               </ul>
             </div>
           </div>
@@ -92,7 +90,7 @@
               <p>Итого: <b>{{ computeItemsCount }}</b> на сумму <b>{{ totalPrice }} ₽</b></p>
             </div>
 
-            <button class="cart__button button button--primery">
+            <button class="cart__button button button--primery" @click="onSubmit">
               Оформить заказ
             </button>
           </div>
@@ -102,7 +100,7 @@
               Похоже произошла ошибка. Попробуйте отправить снова или перезагрузите страницу.
             </p>
           </div>
-        </form>
+        </div>
       </section>
     </div>
 
@@ -118,6 +116,7 @@ import useAccessKeyStore from '@/stores/accessKey'
 import useBasketStore from '@/stores/basket'
 import useDeliveriesStore from '@/stores/deliveries'
 import usePaymentsStore from '@/stores/payments'
+import useOrderStore from '@/stores/order'
 
 import { mapStores } from 'pinia'
 
@@ -137,6 +136,12 @@ export default {
       errorOccured: false,
       payments: [],
       currentPayment: [],
+      fullName: "",
+      fullAddress: "",
+      phoneNumber: "",
+      emailAddress: "",
+      commentText: "",
+      accessKey: "",
     }
   },
   computed: {
@@ -151,6 +156,17 @@ export default {
     }
   },
   methods: {
+    updateInputValue(inputEl, newValue) {
+      if (inputEl === 'name') {
+        this.fullName = newValue
+      } else if (inputEl === 'address') {
+        this.fullAddress = newValue
+      } else if (inputEl === 'phone') {
+        this.phoneNumber = newValue
+      } else if (inputEl === 'email') {
+        this.emailAddress = newValue
+      }
+    },
     viewResult() {
       this.orderIsProcessed = true
     },
@@ -158,6 +174,9 @@ export default {
       this.currentDelivery = delivery
       console.log(this.currentDelivery)
       this.updatePayments()
+    },
+    changePayment(payment) {
+      this.currentPayment = payment
     },
     setDeliveryPrice(price) {
       return price === '0' ? "Бесплатно" : `${price} ₽`
@@ -172,7 +191,29 @@ export default {
       this.items.map(item => {
         this.totalPrice += item.price * item.quantity
       })
-    }
+    },
+    isFieldsChecked() {
+      if (this.fullName === '') {
+        alert("Необходимо заполнить ФИО")
+        return false
+      } else if (this.fullAddress === '') {
+        alert("Необходимо заполнить адрес")
+        return false
+      } else if (this.phoneNumber.length < 17) {
+        alert("Необходимо заполнить номер телефона")
+        return false
+      } else if (this.fullName === '') {
+        alert("Необходимо заполнить адрес электронной почты")
+        return false
+      }
+
+      return true
+    },
+    onSubmit() {
+      if (!this.isFieldsChecked) return
+      useOrderStore().placeOrder(this.accessKey, this.fullName, this.fullAddress, this.phoneNumber, this.emailAddress, this.currentDelivery.id, this.currentPayment.id, this.commentText)
+      this.$router.push({ name: 'order' })
+    },
   },
   created() {
     useDeliveriesStore().getDeliveries()
@@ -185,16 +226,17 @@ export default {
 
     this.paymentsStore.$subscribe((mutation, state) => {
       this.payments = state.payments
+      this.currentPayment = this.payments[0]
     })
 
-    let accessKey = useAccessKeyStore().accessKey
+    this.accessKey = useAccessKeyStore().accessKey
 
-    if (accessKey === "") {
+    if (this.accessKey === "") {
       useAccessKeyStore().setAccessKey()
-      accessKey = useAccessKeyStore().accessKey
+      this.accessKey = useAccessKeyStore().accessKey
     }
 
-    useBasketStore().getBasket(accessKey)
+    useBasketStore().getBasket(this.accessKey)
 
     this.basketStore.$subscribe((mutation, state) => {
       this.items = state.basket
