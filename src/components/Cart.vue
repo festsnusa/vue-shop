@@ -76,7 +76,6 @@ export default {
           Корзина
         </h1>
         <span class="content__info">
-          <!-- 3 товара -->
           {{ computeItemsCount }}
         </span>
       </div>
