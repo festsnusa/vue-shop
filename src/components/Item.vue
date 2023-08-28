@@ -178,7 +178,7 @@ export default {
       this.colorId = this.currentProduct.colors[0].color.id
 
       this.currentProduct.colors.map(color => {
-        if (!color.gallery.length) return
+        if (!color.gallery) return
         color.gallery.map(gallery => {
           this.images.push(gallery.file.url)
         })
