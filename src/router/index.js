@@ -20,9 +20,18 @@ const router = createRouter({
       component: () => import('../views/CheckoutView.vue'),
     },
     {
+      path: '/checkout/:id',
+      name: 'checkoutId',
+      component: () => import('../views/OrderView.vue'),
+    },
+    {
       path: '/item/:id',
       name: 'item',
       component: () => import('../views/ItemView.vue'),
+    },
+    {
+      path: '/:catchAll(.*)*',
+      redirect: { name: 'home' },
     },
   ],
 });

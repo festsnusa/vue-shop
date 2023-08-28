@@ -1,11 +1,11 @@
 <template>
   <main class="content container">
-    <div class="checkout" v-if="!orderIsProcessed">
+    <div class="checkout">
       <div class="content__top">
         <Breadcrumbs :сheckout="currentDelivery" title="Оформление заказа" />
       </div>
 
-      <section class="cart" v-if="!orderIsProcessed">
+      <section class="cart">
         <div class="cart__form form">
           <div class="cart__field">
             <div class="cart__data">
@@ -81,13 +81,10 @@
         </div>
       </section>
     </div>
-
-    <Result v-else />
   </main>
 </template>
 
 <script>
-import Result from '@/components/Result.vue'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
 import Input from '@/components/Input.vue'
 import useAccessKeyStore from '@/stores/accessKey'
@@ -100,13 +97,11 @@ import { mapStores } from 'pinia'
 
 export default {
   components: {
-    Result,
     Breadcrumbs,
     Input,
   },
   data() {
     return {
-      orderIsProcessed: false,
       deliveries: [],
       currentDelivery: "",
       items: [],
@@ -145,8 +140,8 @@ export default {
         this.emailAddress = newValue
       }
     },
-    viewResult() {
-      this.orderIsProcessed = true
+    viewResult(orderId) {
+      this.$router.push({ name: 'checkoutId', params: { id: orderId } })
     },
     changeDelivery(delivery) {
       this.currentDelivery = delivery
@@ -229,7 +224,7 @@ export default {
       this.status = state.status
 
       if (this.status == 200) {
-        this.viewResult()
+        this.viewResult(state.order.id)
       } else {
         this.errorOccured = true
       }

@@ -82,6 +82,12 @@ export default {
   },
   created() {
 
+    this.basket = useOrderStore().order
+
+    if (this.$route.params.id != this.basket.id) {
+      this.$router.push({ name: 'home' })
+    }
+
     this.orderStore.$subscribe((mutation, state) => {
       this.basket = state.order
       this.items = state.order.basket.items
