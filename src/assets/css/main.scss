@@ -567,6 +567,7 @@ a {
   grid-gap: 20px;
 }
 .pics__link {
+  cursor: pointer;
   border-bottom: 3px solid transparent;
   -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease;

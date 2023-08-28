@@ -9,15 +9,8 @@
           <img width="570" height="570" :src="currentImage" alt="Название товара">
         </div>
         <ul class="pics__list">
-          <li class="pics__item">
-            <a href="" class="pics__link pics__link--current">
-              <img width="98" height="98" src="@/assets/img/product-square-2.jpg" alt="Название товара">
-            </a>
-          </li>
-          <li class="pics__item">
-            <a href="" class="pics__link">
-              <img width="98" height="98" src="@/assets/img/product-square-3.jpg" alt="Название товара">
-            </a>
+          <li class="pics__item" v-for="(image, i) in images" @click="changeCurrentImage(i)">
+            <img class="pics__link" width="98" height="98" :src="image" alt="Название товара">
           </li>
         </ul>
       </div>
@@ -54,7 +47,7 @@
                   <li class="colors__item" v-for="(item, i) in colors">
                     <label class="colors__label">
                       <input class="colors__radio sr-only" type="radio" name="color-1" :value="`${item.color.code}`"
-                        @click="changeCurrentImage(item.id, i)">
+                        @click="changeCurrentImage(i)">
                       <span class="colors__value" :style="`background-color: ${item.color.code}`">
                       </span>
                     </label>
@@ -129,7 +122,8 @@ export default {
       total: 0,
       currentImage: "",
       colorId: "",
-      sizeId: ""
+      sizeId: "",
+      images: []
     }
   },
   methods: {
@@ -149,7 +143,7 @@ export default {
     changeCurrentColor(id) {
       this.colorId = id
     },
-    changeCurrentImage(id, index) {
+    changeCurrentImage(index) {
       this.currentImage = this.currentProduct.colors[index].gallery[0].file.url
       console.log(this.currentImage)
       this.changeCurrentColor(this.currentProduct.colors[index].color.id)
@@ -182,6 +176,13 @@ export default {
       let location = this.currentProduct.colors[0].gallery === null ? this.currentProduct.colors[1].gallery[0] : this.currentProduct.colors[0].gallery[0]
       this.currentImage = location.file.url
       this.colorId = this.currentProduct.colors[0].color.id
+
+      this.currentProduct.colors.map(color => {
+        if (!color.gallery.length) return
+        color.gallery.map(gallery => {
+          this.images.push(gallery.file.url)
+        })
+      })
     })
 
   }
