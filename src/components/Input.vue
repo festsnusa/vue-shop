@@ -4,6 +4,7 @@
       v-mask="'+7(###)-###-##-##'" @change="updateValue">
     <input v-else class="form__input" :type="type" :name="name" :placeholder="placeholder" @change="updateValue">
     <span class="form__value">{{ value }}</span>
+    <span class="form__error" v-show="errorVisible">{{ errorMessage }}</span>
   </label>
 </template>
 
@@ -12,7 +13,7 @@ import { mask } from 'vue-the-mask'
 
 export default {
   name: "Input",
-  props: ["value", "name", "type", "placeholder"],
+  props: ["value", "name", "type", "placeholder", "errorMessage", "errorVisible"],
   directives: { mask },
   methods: {
     updateValue(e) {

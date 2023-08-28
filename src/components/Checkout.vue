@@ -10,13 +10,16 @@
           <div class="cart__field">
             <div class="cart__data">
               <Input @updateValue="updateInputValue" value="ФИО" name="name" type="text"
-                placeholder="Введите ваше полное имя" />
+                placeholder="Введите ваше полное имя" errorMessage="Необходимо заполнить ФИО"
+                :errorVisible="fullNameError" />
               <Input @updateValue="updateInputValue" value="Адрес доставки" name="address" type="text"
-                placeholder="Введите ваш адрес" />
+                placeholder="Введите ваш адрес" errorMessage="Необходимо заполнить адрес"
+                :errorVisible="fullAddressError" />
               <Input @updateValue="updateInputValue" value="Телефон" name="phone" type="tel"
-                placeholder="Введите ваш телефон" />
-              <Input @updateValue="updateInputValue" value="Email" name="email" type="email"
-                placeholder="Введи ваш Email" />
+                placeholder="Введите ваш телефон" errorMessage="Необходимо заполнить номер телефона"
+                :errorVisible="phoneNumberError" />
+              <Input @updateValue="updateInputValue" value="Email" name="email" type="email" placeholder="Введи ваш Email"
+                errorMessage="Необходимо заполнить адрес электронной почты" :errorVisible="emailError" />
               <label class="form__label">
                 <textarea class="form__input form__input--area" name="comments" placeholder="Ваши пожелания"
                   v-model="commentText"></textarea>
@@ -115,6 +118,10 @@ export default {
       emailAddress: "",
       commentText: "",
       accessKey: "",
+      fullNameError: false,
+      fullAddressError: false,
+      phoneNumberError: false,
+      emailError: false,
     }
   },
   computed: {
@@ -169,21 +176,30 @@ export default {
       return regex.test(this.emailAddress)
     },
     isFieldsChecked() {
-      if (this.fullName === '') {
-        alert("Необходимо заполнить ФИО")
-        return false
-      } else if (this.fullAddress === '') {
-        alert("Необходимо заполнить адрес")
-        return false
-      } else if (this.phoneNumber.length < 17) {
-        alert("Необходимо заполнить номер телефона")
-        return false
-      } else if (!this.isEmailValidated()) {
-        alert("Необходимо заполнить адрес электронной почты")
-        return false
-      }
 
-      return true
+      let fieldsChecked = true
+
+      if (this.fullName === '') {
+        this.fullNameError = true
+        fieldsChecked = false
+      } else { this.fullNameError = false }
+
+      if (this.fullAddress === '') {
+        this.fullAddressError = true
+        fieldsChecked = false
+      } else { this.fullAddressError = false }
+
+      if (this.phoneNumber.length < 17) {
+        this.phoneNumberError = true
+        fieldsChecked = false
+      } else { this.phoneNumberError = false }
+
+      if (!this.isEmailValidated()) {
+        this.emailError = true
+        fieldsChecked = false
+      } else { this.emailError = false }
+
+      return fieldsChecked
     },
     onSubmit() {
       if (!this.isFieldsChecked()) return

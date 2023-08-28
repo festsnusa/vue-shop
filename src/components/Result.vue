@@ -83,6 +83,8 @@ export default {
   created() {
 
     this.basket = useOrderStore().order
+    this.items = this.basket.basket.items
+    this.calculateTotal()
 
     if (this.$route.params.id != this.basket.id) {
       this.$router.push({ name: 'home' })
