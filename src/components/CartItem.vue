@@ -16,6 +16,7 @@
     <span class="product__code">
       Артикул: 1501230
     </span>
+    <span class="product__size">Размер: {{ item.size.title }}</span>
 
     <div class="product__counter form__counter">
       <button @click="changeQuantity('-')">-</button>
