@@ -1,6 +1,7 @@
 # shop
+A ["Moire"](https://chimerical-strudel-f5db41.netlify.app) internet shop website template using REST API.
 
-This template should help get you started developing with Vue 3 in Vite.
+REST API documentation is [here](https://vue-moire.skillbox.cc/)
 
 ## Recommended IDE Setup
 
